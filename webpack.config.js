@@ -104,7 +104,7 @@ module.exports = {
     // ✅ Add DefinePlugin to inject environment variables
     new webpack.DefinePlugin({
       'process.env': {
-        API_URL: JSON.stringify(process.env.API_URL || "https://leaves-disease-api.vercel.app"),
+        API_URL: JSON.stringify(process.env.API_URL || "https://leaves-disease-api-production.up.railway.app"),
         NODE_ENV: JSON.stringify(process.env.NODE_ENV || "development"),
         VERSION: JSON.stringify(process.env.npm_package_version || "2.0.0"),
       }
@@ -130,7 +130,7 @@ module.exports = {
         : false,
       templateParameters: {
         env: {
-          API_URL: process.env.API_URL || "https://leaves-disease-api.vercel.app",
+          API_URL: process.env.API_URL || "https://leaves-disease-api-production.up.railway.app",
           NODE_ENV: process.env.NODE_ENV || "development",
           VERSION: process.env.npm_package_version || "2.0.0",
         },

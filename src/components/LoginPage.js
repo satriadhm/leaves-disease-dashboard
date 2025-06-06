@@ -25,14 +25,14 @@ export default class LoginPage {
           
           <form class="auth-form" id="loginForm">
             <div class="form-group">
-              <label for="username">Username atau Email</label>
+              <label for="username">Username</label>
               <div class="input-group">
                 <span class="input-icon">👤</span>
                 <input 
                   type="text" 
                   id="username" 
                   name="username" 
-                  placeholder="Masukkan username atau email"
+                  placeholder="Masukkan username"
                   required 
                   autocomplete="username"
                 >
@@ -185,7 +185,7 @@ export default class LoginPage {
     this.clearErrors();
 
     if (!username) {
-      this.showFieldError('usernameError', 'Username atau email harus diisi');
+      this.showFieldError('usernameError', 'Username harus diisi');
       isValid = false;
     } else if (username.length < 3) {
       this.showFieldError('usernameError', 'Username minimal 3 karakter');
