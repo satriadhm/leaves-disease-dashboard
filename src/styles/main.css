@@ -1,0 +1,558 @@
+/* Reset and Base Styles */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	line-height: 1.6;
+	color: #333;
+	background-color: #f5f5f5;
+}
+
+/* Utility Classes */
+.btn {
+	padding: 12px 24px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 16px;
+	font-weight: 500;
+	transition: all 0.3s ease;
+	text-decoration: none;
+	display: inline-block;
+	text-align: center;
+}
+
+.btn-primary {
+	background-color: #2563eb;
+	color: white;
+}
+
+.btn-primary:hover {
+	background-color: #1d4ed8;
+	transform: translateY(-2px);
+}
+
+.btn-secondary {
+	background-color: #6b7280;
+	color: white;
+}
+
+.btn-secondary:hover {
+	background-color: #4b5563;
+}
+
+.btn-success {
+	background-color: #059669;
+	color: white;
+}
+
+.btn-success:hover {
+	background-color: #047857;
+}
+
+.link {
+	color: #2563eb;
+	text-decoration: none;
+}
+
+.link:hover {
+	text-decoration: underline;
+}
+
+/* Auth Pages */
+.auth-container {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.auth-card {
+	background: white;
+	padding: 40px;
+	border-radius: 16px;
+	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	max-width: 400px;
+}
+
+.auth-header {
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.auth-header h1 {
+	color: #2563eb;
+	font-size: 24px;
+	margin-bottom: 8px;
+}
+
+.auth-header h2 {
+	color: #6b7280;
+	font-size: 18px;
+	font-weight: 400;
+}
+
+.auth-form {
+	margin-bottom: 20px;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 8px;
+	font-weight: 500;
+	color: #374151;
+}
+
+.form-group input {
+	width: 100%;
+	padding: 12px 16px;
+	border: 2px solid #e5e7eb;
+	border-radius: 8px;
+	font-size: 16px;
+	transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+	outline: none;
+	border-color: #2563eb;
+}
+
+.error-message {
+	color: #dc2626;
+	font-size: 14px;
+	margin-top: 4px;
+	display: block;
+}
+
+.auth-footer {
+	text-align: center;
+	color: #6b7280;
+}
+
+/* Home Page */
+.home-container {
+	min-height: 100vh;
+	background-color: #f9fafb;
+}
+
+.header {
+	background: white;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	padding: 16px 0;
+}
+
+.header-content {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.header h1 {
+	color: #2563eb;
+	font-size: 24px;
+}
+
+.user-info {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.main-content {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 40px 20px;
+}
+
+.welcome-section {
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+.welcome-section h2 {
+	font-size: 32px;
+	color: #1f2937;
+	margin-bottom: 12px;
+}
+
+.welcome-section p {
+	font-size: 18px;
+	color: #6b7280;
+}
+
+/* Detection Section */
+.detection-section {
+	background: white;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+	overflow: hidden;
+	margin-bottom: 40px;
+}
+
+.tab-navigation {
+	display: flex;
+	background-color: #f3f4f6;
+}
+
+.tab-btn {
+	flex: 1;
+	padding: 16px 24px;
+	background: none;
+	border: none;
+	font-size: 16px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	color: #6b7280;
+}
+
+.tab-btn.active {
+	background-color: white;
+	color: #2563eb;
+	border-bottom: 3px solid #2563eb;
+}
+
+.tab-btn:hover:not(.active) {
+	background-color: #e5e7eb;
+}
+
+.tab-content {
+	padding: 40px;
+}
+
+.tab-panel {
+	display: none;
+}
+
+.tab-panel.active {
+	display: block;
+}
+
+/* Camera Component */
+.camera-container {
+	text-align: center;
+}
+
+.camera-preview {
+	margin-bottom: 24px;
+	border-radius: 12px;
+	overflow: hidden;
+	background-color: #000;
+	max-width: 640px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.camera-preview video {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+.camera-controls {
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+}
+
+.camera-status {
+	background-color: #f3f4f6;
+	padding: 16px;
+	border-radius: 8px;
+	color: #6b7280;
+}
+
+/* Upload Component */
+.upload-container {
+	text-align: center;
+}
+
+.upload-area {
+	border: 3px dashed #d1d5db;
+	border-radius: 12px;
+	padding: 60px 40px;
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+.upload-area:hover {
+	border-color: #2563eb;
+	background-color: #f8fafc;
+}
+
+.upload-area.drag-over {
+	border-color: #2563eb;
+	background-color: #eff6ff;
+}
+
+.upload-icon {
+	font-size: 48px;
+	margin-bottom: 16px;
+}
+
+.upload-area h3 {
+	font-size: 24px;
+	color: #1f2937;
+	margin-bottom: 8px;
+}
+
+.upload-area p {
+	color: #6b7280;
+	margin-bottom: 24px;
+}
+
+.file-preview {
+	background-color: #f9fafb;
+	border-radius: 12px;
+	padding: 24px;
+	margin-bottom: 20px;
+}
+
+.file-preview img {
+	max-width: 100%;
+	max-height: 400px;
+	border-radius: 8px;
+	margin-bottom: 16px;
+}
+
+.file-info {
+	margin-bottom: 20px;
+}
+
+.file-info p {
+	color: #6b7280;
+	margin-bottom: 4px;
+}
+
+.preview-actions {
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.upload-status {
+	background-color: #f3f4f6;
+	padding: 16px;
+	border-radius: 8px;
+	color: #6b7280;
+}
+
+/* Results Section */
+.results-section {
+	background: white;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+	padding: 40px;
+}
+
+.results-section h3 {
+	font-size: 24px;
+	color: #1f2937;
+	margin-bottom: 24px;
+	text-align: center;
+}
+
+.result-card {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 32px;
+	align-items: center;
+}
+
+.result-image img {
+	width: 100%;
+	height: auto;
+	border-radius: 12px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.result-info h4 {
+	font-size: 20px;
+	color: #1f2937;
+	margin-bottom: 16px;
+}
+
+.result-info p {
+	margin-bottom: 12px;
+	font-size: 16px;
+	line-height: 1.6;
+}
+
+.result-info strong {
+	color: #374151;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.header-content {
+		flex-direction: column;
+		gap: 16px;
+		text-align: center;
+	}
+
+	.user-info {
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.main-content {
+		padding: 20px 16px;
+	}
+
+	.welcome-section h2 {
+		font-size: 24px;
+	}
+
+	.welcome-section p {
+		font-size: 16px;
+	}
+
+	.tab-content {
+		padding: 24px 16px;
+	}
+
+	.camera-controls {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.camera-controls .btn {
+		width: 100%;
+		max-width: 200px;
+	}
+
+	.upload-area {
+		padding: 40px 20px;
+	}
+
+	.upload-area h3 {
+		font-size: 20px;
+	}
+
+	.preview-actions {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.preview-actions .btn {
+		width: 100%;
+		max-width: 200px;
+	}
+
+	.result-card {
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+
+	.results-section {
+		padding: 24px 16px;
+	}
+
+	.auth-card {
+		padding: 24px;
+	}
+
+	.form-group input {
+		font-size: 16px; /* Prevent zoom on iOS */
+	}
+}
+
+@media (max-width: 480px) {
+	.tab-btn {
+		padding: 12px 16px;
+		font-size: 14px;
+	}
+
+	.btn {
+		padding: 10px 20px;
+		font-size: 14px;
+	}
+
+	.upload-area {
+		padding: 30px 16px;
+	}
+
+	.upload-icon {
+		font-size: 36px;
+	}
+
+	.camera-preview {
+		margin-bottom: 16px;
+	}
+}
+
+/* Loading States */
+.loading {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.loading::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 20px;
+	height: 20px;
+	margin: -10px 0 0 -10px;
+	border: 2px solid #f3f3f3;
+	border-top: 2px solid #2563eb;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* Focus styles for keyboard navigation */
+.btn:focus,
+input:focus,
+.tab-btn:focus {
+	outline: 2px solid #2563eb;
+	outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+	.btn-primary {
+		background-color: #000;
+		border: 2px solid #000;
+	}
+
+	.btn-secondary {
+		background-color: #666;
+		border: 2px solid #666;
+	}
+}
