@@ -19,7 +19,7 @@ module.exports = {
   },
   
   resolve: {
-    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    extensions: [".js"],
     alias: {
       "@": path.resolve(__dirname, "src"),
       "@components": path.resolve(__dirname, "src/components"),
@@ -85,7 +85,7 @@ module.exports = {
         },
         parser: {
           dataUrlCondition: {
-            maxSize: 8 * 1024, // 8kb
+            maxSize: 8 * 1024,
           },
         },
       },
@@ -145,7 +145,6 @@ module.exports = {
           compress: {
             drop_console: isProduction,
             drop_debugger: isProduction,
-            pure_funcs: isProduction ? ["console.log"] : [],
           },
           format: {
             comments: false,

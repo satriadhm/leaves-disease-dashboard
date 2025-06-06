@@ -6,20 +6,10 @@
   "scripts": {
     "build": "webpack --mode=production",
     "build:prod": "NODE_ENV=production webpack --mode=production",
-    "build:analyze": "NODE_ENV=production webpack --mode=production --env analyze",
     "dev": "webpack serve --mode=development",
     "start": "webpack serve --mode=development",
     "preview": "webpack serve --mode=production",
-    "lint": "eslint src --ext .js --max-warnings 0",
-    "lint:fix": "eslint src --ext .js --fix",
-    "format": "prettier --write \"src/**/*.{js,css}\"",
-    "format:check": "prettier --check \"src/**/*.{js,css}\"",
-    "clean": "rimraf dist",
-    "test": "echo \"No tests specified\" && exit 0",
-    "test:watch": "echo \"No tests specified\" && exit 0",
-    "test:coverage": "echo \"No tests specified\" && exit 0",
-    "prepare": "husky install",
-    "precommit": "lint-staged"
+    "clean": "rimraf dist"
   },
   "keywords": [
     "plant-disease",
@@ -41,21 +31,14 @@
     "css-loader": "^6.11.0",
     "css-minimizer-webpack-plugin": "^5.0.1",
     "cssnano": "^6.0.1",
-    "eslint": "^8.55.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.4.1",
     "html-webpack-plugin": "^5.6.3",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
     "mini-css-extract-plugin": "^2.9.2",
     "postcss": "^8.5.4",
     "postcss-loader": "^7.3.4",
-    "prettier": "^3.1.1",
     "rimraf": "^5.0.5",
     "style-loader": "^3.3.4",
     "terser-webpack-plugin": "^5.3.14",
     "webpack": "^5.99.9",
-    "webpack-bundle-analyzer": "^4.10.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.2"
   },
@@ -80,14 +63,5 @@
   "bugs": {
     "url": "https://github.com/satriadhm/leaves-disease-dashboard/issues"
   },
-  "homepage": "https://github.com/satriadhm/leaves-disease-dashboard#readme",
-  "lint-staged": {
-    "src/**/*.{js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "src/**/*.{css,scss}": [
-      "prettier --write"
-    ]
-  }
+  "homepage": "https://github.com/satriadhm/leaves-disease-dashboard#readme"
 }
