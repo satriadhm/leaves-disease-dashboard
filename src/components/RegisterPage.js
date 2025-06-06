@@ -4,12 +4,12 @@ import authManager from '../utils/auth.js';
 export default class RegisterPage {
   constructor() {
     this.formData = {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      firstName: "",
-      lastName: ""
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      firstName: '',
+      lastName: ''
     };
     this.isLoading = false;
   }
@@ -147,10 +147,11 @@ export default class RegisterPage {
             </div>
             
             <button type="submit" class="btn btn-primary" id="registerBtn" ${this.isLoading ? 'disabled' : ''}>
-              ${this.isLoading ? 
-                '<span class="btn-spinner"></span> Mendaftar...' : 
-                'Daftar Sekarang'
-              }
+              ${
+                this.isLoading
+    '<span class="btn-spinner"></span> Mendaftar...' :
+    'Daftar Sekarang'
+}
             </button>
           </form>
           
@@ -186,26 +187,26 @@ export default class RegisterPage {
     const termsLink = document.getElementById('termsLink');
     const privacyLink = document.getElementById('privacyLink');
 
-    form.addEventListener('submit', (e) => this.handleSubmit(e));
-    loginLink.addEventListener('click', (e) => this.handleNavigation(e, '/login'));
-    termsLink.addEventListener('click', (e) => this.handleTermsClick(e));
-    privacyLink.addEventListener('click', (e) => this.handlePrivacyClick(e));
+    form.addEventListener('submit', e => this.handleSubmit(e));
+    loginLink.addEventListener('click', e => this.handleNavigation(e, '/login'));
+    termsLink.addEventListener('click', e => this.handleTermsClick(e));
+    privacyLink.addEventListener('click', e => this.handlePrivacyClick(e));
   }
 
   setupPasswordToggles() {
     const toggles = [
       { toggle: 'passwordToggle', input: 'password' },
-      { toggle: 'confirmPasswordToggle', input: 'confirmPassword' }
+      { toggle: 'confirmPasswordToggle', input: 'confirmPassword' },
     ];
 
     toggles.forEach(({ toggle, input }) => {
       const toggleElement = document.getElementById(toggle);
       const inputElement = document.getElementById(input);
-      
+
       toggleElement.addEventListener('click', () => {
         const type = inputElement.getAttribute('type');
         const icon = toggleElement.querySelector('.password-toggle-icon');
-        
+
         if (type === 'password') {
           inputElement.setAttribute('type', 'text');
           icon.textContent = '🙈';
@@ -223,10 +224,10 @@ export default class RegisterPage {
     const strengthFill = strengthElement.querySelector('.strength-fill');
     const strengthText = strengthElement.querySelector('.strength-text');
 
-    passwordInput.addEventListener('input', (e) => {
+    passwordInput.addEventListener('input', e => {
       const password = e.target.value;
       const strength = this.calculatePasswordStrength(password);
-      
+
       strengthFill.style.width = `${strength.percentage}%`;
       strengthFill.className = `strength-fill strength-${strength.level}`;
       strengthText.textContent = strength.text;
@@ -239,18 +240,18 @@ export default class RegisterPage {
     }
 
     let score = 0;
-    let feedback = [];
+    const feedback = [];
 
     // Length
-    if (password.length >= 6) score += 20;
-    if (password.length >= 8) score += 10;
-    if (password.length >= 12) score += 10;
+    if (password.length >= 6) {score += 20;}
+    if (password.length >= 8) {score += 10;}
+    if (password.length >= 12) {score += 10;}
 
     // Character types
-    if (/[a-z]/.test(password)) score += 15;
-    if (/[A-Z]/.test(password)) score += 15;
-    if (/[0-9]/.test(password)) score += 15;
-    if (/[^A-Za-z0-9]/.test(password)) score += 15;
+    if (/[a-z]/.test(password)) {score += 15;}
+    if (/[A-Z]/.test(password)) {score += 15;}
+    if (/[0-9]/.test(password)) {score += 15;}
+    if (/[^A-Za-z0-9]/.test(password)) {score += 15;}
 
     let level, text;
     if (score < 30) {
@@ -272,7 +273,7 @@ export default class RegisterPage {
 
   setupRealTimeValidation() {
     const fields = ['username', 'email', 'password', 'confirmPassword'];
-    
+
     fields.forEach(field => {
       const input = document.getElementById(field);
       input.addEventListener('blur', () => this.validateField(field));
@@ -284,7 +285,7 @@ export default class RegisterPage {
     confirmPassword.addEventListener('input', () => {
       const password = document.getElementById('password').value;
       const confirm = confirmPassword.value;
-      
+
       if (confirm && password !== confirm) {
         this.showFieldError('confirmPasswordError', 'Password tidak cocok');
       } else {
@@ -337,9 +338,9 @@ export default class RegisterPage {
 
   async handleSubmit(e) {
     e.preventDefault();
-    
-    if (this.isLoading) return;
-    
+
+    if (this.isLoading) {return;}
+
     const formData = new FormData(e.target);
     const data = {
       username: formData.get('username').trim(),
@@ -348,7 +349,7 @@ export default class RegisterPage {
       confirmPassword: formData.get('confirmPassword'),
       firstName: formData.get('firstName').trim(),
       lastName: formData.get('lastName').trim(),
-      agreeTerms: formData.get('agreeTerms')
+      agreeTerms: formData.get('agreeTerms'),
     };
 
     if (this.validateForm(data)) {
@@ -417,7 +418,7 @@ export default class RegisterPage {
 
   clearAllErrors() {
     const errorElements = document.querySelectorAll('.error-message');
-    errorElements.forEach(element => element.textContent = '');
+    errorElements.forEach(element => (element.textContent = ''));
   }
 
   clearFieldError(fieldName) {
@@ -437,37 +438,40 @@ export default class RegisterPage {
   async register(data) {
     try {
       this.setLoadingState(true);
-      
-      window.dispatchEvent(new CustomEvent('showLoading', {
-        detail: { message: 'Membuat akun...' }
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showLoading', {
+          detail: { message: 'Membuat akun...' },
+        }),
+      );
 
       const userData = {
         username: data.username,
         email: data.email,
         password: data.password,
         firstName: data.firstName,
-        lastName: data.lastName
+        lastName: data.lastName,
       };
 
       await authManager.register(userData);
-      
+
       window.dispatchEvent(new CustomEvent('hideLoading'));
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Akun berhasil dibuat! Silakan login dengan akun baru Anda.'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Akun berhasil dibuat! Silakan login dengan akun baru Anda.',
+        }),
+      );
 
       // Navigate to login page
       setTimeout(() => {
         this.handleNavigation(null, '/login');
       }, 2000);
-
     } catch (error) {
       window.dispatchEvent(new CustomEvent('hideLoading'));
       this.setLoadingState(false);
-      
+
       let errorMessage = 'Terjadi kesalahan saat membuat akun';
-      
+
       if (error.message.includes('Username') && error.message.includes('exists')) {
         errorMessage = 'Username sudah digunakan';
         this.showFieldError('usernameError', errorMessage);
@@ -477,10 +481,12 @@ export default class RegisterPage {
       } else if (error.message.includes('network') || error.message.includes('fetch')) {
         errorMessage = 'Koneksi bermasalah. Periksa internet Anda';
       }
-      
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: errorMessage
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: errorMessage,
+        }),
+      );
     }
   }
 
@@ -488,7 +494,7 @@ export default class RegisterPage {
     this.isLoading = loading;
     const registerBtn = document.getElementById('registerBtn');
     const form = document.getElementById('registerForm');
-    
+
     if (loading) {
       registerBtn.disabled = true;
       registerBtn.innerHTML = '<span class="btn-spinner"></span> Mendaftar...';
@@ -502,20 +508,26 @@ export default class RegisterPage {
 
   handleTermsClick(e) {
     e.preventDefault();
-    window.dispatchEvent(new CustomEvent('showInfo', {
-      detail: 'Dengan menggunakan layanan ini, Anda setuju untuk menggunakan aplikasi sesuai dengan ketentuan yang berlaku.'
-    }));
+    window.dispatchEvent(
+      new CustomEvent('showInfo', {
+        detail:
+          'Dengan menggunakan layanan ini, Anda setuju untuk menggunakan aplikasi sesuai dengan ketentuan yang berlaku.',
+      }),
+    );
   }
 
   handlePrivacyClick(e) {
     e.preventDefault();
-    window.dispatchEvent(new CustomEvent('showInfo', {
-      detail: 'Kami melindungi privasi data Anda. Data yang dikumpulkan hanya digunakan untuk meningkatkan layanan deteksi penyakit tanaman.'
-    }));
+    window.dispatchEvent(
+      new CustomEvent('showInfo', {
+        detail:
+          'Kami melindungi privasi data Anda. Data yang dikumpulkan hanya digunakan untuk meningkatkan layanan deteksi penyakit tanaman.',
+      }),
+    );
   }
 
   handleNavigation(e, path) {
-    if (e) e.preventDefault();
+    if (e) {e.preventDefault();}
     window.dispatchEvent(new CustomEvent('navigate', { detail: path }));
   }
 }

@@ -196,7 +196,7 @@
     left: var(--space-2);
     max-width: none;
   }
-  
+
   .loading-content {
     margin: var(--space-4);
     padding: var(--space-6);

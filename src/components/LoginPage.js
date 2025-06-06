@@ -4,8 +4,8 @@ import authManager from '../utils/auth.js';
 export default class LoginPage {
   constructor() {
     this.formData = {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
     };
     this.isLoading = false;
   }
@@ -69,10 +69,7 @@ export default class LoginPage {
             </div>
             
             <button type="submit" class="btn btn-primary" id="loginBtn" ${this.isLoading ? 'disabled' : ''}>
-              ${this.isLoading ? 
-                '<span class="btn-spinner"></span> Masuk...' : 
-                'Masuk'
-              }
+              ${this.isLoading ? '<span class="btn-spinner"></span> Masuk...' : 'Masuk'}
             </button>
           </form>
           
@@ -124,21 +121,21 @@ export default class LoginPage {
     const registerLink = document.querySelector('a[href="/register"]');
     const forgotLink = document.getElementById('forgotPassword');
 
-    form.addEventListener('submit', (e) => this.handleSubmit(e));
-    registerLink.addEventListener('click', (e) => this.handleNavigation(e, '/register'));
-    forgotLink.addEventListener('click', (e) => this.handleForgotPassword(e));
+    form.addEventListener('submit', e => this.handleSubmit(e));
+    registerLink.addEventListener('click', e => this.handleNavigation(e, '/register'));
+    forgotLink.addEventListener('click', e => this.handleForgotPassword(e));
   }
 
   setupDemoCredentials() {
     const demoButtons = document.querySelectorAll('.btn-demo');
     demoButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', e => {
         const username = e.target.dataset.username;
         const password = e.target.dataset.password;
-        
+
         document.getElementById('username').value = username;
         document.getElementById('password').value = password;
-        
+
         // Auto submit after a short delay
         setTimeout(() => {
           document.getElementById('loginForm').dispatchEvent(new Event('submit'));
@@ -150,11 +147,11 @@ export default class LoginPage {
   setupPasswordToggle() {
     const passwordToggle = document.getElementById('passwordToggle');
     const passwordInput = document.getElementById('password');
-    
+
     passwordToggle.addEventListener('click', () => {
       const type = passwordInput.getAttribute('type');
       const icon = passwordToggle.querySelector('.password-toggle-icon');
-      
+
       if (type === 'password') {
         passwordInput.setAttribute('type', 'text');
         icon.textContent = '🙈';
@@ -167,9 +164,11 @@ export default class LoginPage {
 
   async handleSubmit(e) {
     e.preventDefault();
-    
-    if (this.isLoading) return;
-    
+
+    if (this.isLoading) {
+      return;
+    }
+
     const formData = new FormData(e.target);
     const username = formData.get('username').trim();
     const password = formData.get('password');
@@ -216,29 +215,32 @@ export default class LoginPage {
   async login(username, password) {
     try {
       this.setLoadingState(true);
-      
-      window.dispatchEvent(new CustomEvent('showLoading', {
-        detail: { message: 'Memverifikasi kredensial...' }
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showLoading', {
+          detail: { message: 'Memverifikasi kredensial...' },
+        }),
+      );
 
       const response = await authManager.login({ username, password });
-      
+
       window.dispatchEvent(new CustomEvent('hideLoading'));
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: `Selamat datang, ${response.username}!`
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: `Selamat datang, ${response.username}!`,
+        }),
+      );
 
       // Navigate to home page
       setTimeout(() => {
         this.handleNavigation(null, '/');
       }, 1000);
-
     } catch (error) {
       window.dispatchEvent(new CustomEvent('hideLoading'));
       this.setLoadingState(false);
-      
+
       let errorMessage = 'Terjadi kesalahan saat login';
-      
+
       if (error.message.includes('Invalid')) {
         errorMessage = 'Username atau password salah';
       } else if (error.message.includes('not found')) {
@@ -246,10 +248,12 @@ export default class LoginPage {
       } else if (error.message.includes('network') || error.message.includes('fetch')) {
         errorMessage = 'Koneksi bermasalah. Periksa internet Anda';
       }
-      
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: errorMessage
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: errorMessage,
+        }),
+      );
     }
   }
 
@@ -257,7 +261,7 @@ export default class LoginPage {
     this.isLoading = loading;
     const loginBtn = document.getElementById('loginBtn');
     const form = document.getElementById('loginForm');
-    
+
     if (loading) {
       loginBtn.disabled = true;
       loginBtn.innerHTML = '<span class="btn-spinner"></span> Masuk...';
@@ -271,13 +275,17 @@ export default class LoginPage {
 
   handleForgotPassword(e) {
     e.preventDefault();
-    window.dispatchEvent(new CustomEvent('showInfo', {
-      detail: 'Fitur reset password akan segera tersedia. Silakan hubungi admin untuk bantuan.'
-    }));
+    window.dispatchEvent(
+      new CustomEvent('showInfo', {
+        detail: 'Fitur reset password akan segera tersedia. Silakan hubungi admin untuk bantuan.',
+      }),
+    );
   }
 
   handleNavigation(e, path) {
-    if (e) e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
     window.dispatchEvent(new CustomEvent('navigate', { detail: path }));
   }
 }

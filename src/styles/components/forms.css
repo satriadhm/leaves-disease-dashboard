@@ -116,7 +116,7 @@
   user-select: none;
 }
 
-.checkbox-container input[type="checkbox"] {
+.checkbox-container input[type='checkbox'] {
   width: 1rem;
   height: 1rem;
   margin: 0;
@@ -141,10 +141,18 @@
   border-radius: 2px;
 }
 
-.strength-weak { background: var(--error-500); }
-.strength-medium { background: var(--warning-500); }
-.strength-strong { background: var(--success-500); }
-.strength-very-strong { background: var(--success-600); }
+.strength-weak {
+  background: var(--error-500);
+}
+.strength-medium {
+  background: var(--warning-500);
+}
+.strength-strong {
+  background: var(--success-500);
+}
+.strength-very-strong {
+  background: var(--success-600);
+}
 
 .strength-text {
   font-size: 0.75rem;

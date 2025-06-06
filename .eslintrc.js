@@ -1,3 +1,4 @@
+// .eslintrc.js - Fixed ESLint Configuration
 module.exports = {
   env: {
     browser: true,
@@ -5,13 +6,8 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: [
-    'eslint:recommended',
-    'prettier',
-  ],
-  plugins: [
-    'prettier',
-  ],
+  extends: ['eslint:recommended', 'prettier'],
+  plugins: ['prettier'],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -20,11 +16,14 @@ module.exports = {
     'prettier/prettier': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-unused-vars': ['error', { 
-      argsIgnorePattern: '^_',
-      varsIgnorePattern: '^_',
-      caughtErrorsIgnorePattern: '^_'
-    }],
+    'no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ],
     'prefer-const': 'error',
     'no-var': 'error',
     'object-shorthand': 'error',
@@ -32,17 +31,20 @@ module.exports = {
     'template-curly-spacing': 'error',
     'arrow-spacing': 'error',
     'comma-dangle': ['error', 'always-multiline'],
-    'semi': ['error', 'always'],
-    'quotes': ['error', 'single', { avoidEscape: true }],
-    'indent': ['error', 2, { SwitchCase: 1 }],
-    'max-len': ['warn', { 
-      code: 100, 
-      ignoreUrls: true, 
-      ignoreStrings: true, 
-      ignoreTemplateLiterals: true 
-    }],
-    'eqeqeq': ['error', 'always'],
-    'curly': ['error', 'all'],
+    semi: ['error', 'always'],
+    quotes: ['error', 'single', { avoidEscape: true }],
+    indent: ['error', 2, { SwitchCase: 1 }],
+    'max-len': [
+      'warn',
+      {
+        code: 100,
+        ignoreUrls: true,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+      },
+    ],
+    eqeqeq: ['error', 'always'],
+    curly: ['error', 'all'],
     'brace-style': ['error', '1tbs'],
     'keyword-spacing': 'error',
     'space-before-blocks': 'error',
@@ -67,87 +69,13 @@ module.exports = {
     File: 'readonly',
     FileReader: 'readonly',
     Image: 'readonly',
+    process: 'readonly', // Added for NODE_ENV access
   },
   ignorePatterns: [
     'dist/',
     'node_modules/',
     '*.min.js',
     'coverage/',
-  ],
-};module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
-    node: true,
-    jest: true,
-  },
-  extends: [
-    'eslint:recommended',
-    'prettier',
-  ],
-  plugins: [
-    'prettier',
-  ],
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-  },
-  rules: {
-    'prettier/prettier': 'error',
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-unused-vars': ['error', { 
-      argsIgnorePattern: '^_',
-      varsIgnorePattern: '^_',
-      caughtErrorsIgnorePattern: '^_'
-    }],
-    'prefer-const': 'error',
-    'no-var': 'error',
-    'object-shorthand': 'error',
-    'prefer-template': 'error',
-    'template-curly-spacing': 'error',
-    'arrow-spacing': 'error',
-    'comma-dangle': ['error', 'always-multiline'],
-    'semi': ['error', 'always'],
-    'quotes': ['error', 'single', { avoidEscape: true }],
-    'indent': ['error', 2, { SwitchCase: 1 }],
-    'max-len': ['warn', { 
-      code: 100, 
-      ignoreUrls: true, 
-      ignoreStrings: true, 
-      ignoreTemplateLiterals: true 
-    }],
-    'eqeqeq': ['error', 'always'],
-    'curly': ['error', 'all'],
-    'brace-style': ['error', '1tbs'],
-    'keyword-spacing': 'error',
-    'space-before-blocks': 'error',
-    'space-infix-ops': 'error',
-    'space-unary-ops': 'error',
-    'no-trailing-spaces': 'error',
-    'eol-last': 'error',
-    'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 1 }],
-  },
-  globals: {
-    window: 'readonly',
-    document: 'readonly',
-    navigator: 'readonly',
-    console: 'readonly',
-    localStorage: 'readonly',
-    sessionStorage: 'readonly',
-    fetch: 'readonly',
-    FormData: 'readonly',
-    URLSearchParams: 'readonly',
-    URL: 'readonly',
-    Blob: 'readonly',
-    File: 'readonly',
-    FileReader: 'readonly',
-    Image: 'readonly',
-  },
-  ignorePatterns: [
-    'dist/',
-    'node_modules/',
-    '*.min.js',
-    'coverage/',
+    'webpack.config.js', // Ignore webpack config for now
   ],
 };

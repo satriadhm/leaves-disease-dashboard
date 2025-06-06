@@ -17,19 +17,19 @@ export default class NotificationManager {
 
   bindEvents() {
     // Listen for global notification events
-    window.addEventListener('showSuccess', (e) => {
+    window.addEventListener('showSuccess', e => {
       this.showSuccess(e.detail);
     });
 
-    window.addEventListener('showError', (e) => {
+    window.addEventListener('showError', e => {
       this.showError(e.detail);
     });
 
-    window.addEventListener('showWarning', (e) => {
+    window.addEventListener('showWarning', e => {
       this.showWarning(e.detail);
     });
 
-    window.addEventListener('showInfo', (e) => {
+    window.addEventListener('showInfo', e => {
       this.showInfo(e.detail);
     });
   }
@@ -38,9 +38,9 @@ export default class NotificationManager {
     const container = document.getElementById('notification-container');
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
-    
+
     const icon = this.getIcon(type);
-    
+
     notification.innerHTML = `
       <div class="notification-content">
         <div class="notification-icon">${icon}</div>
@@ -68,8 +68,10 @@ export default class NotificationManager {
   }
 
   removeNotification(notification) {
-    if (!notification || !notification.parentNode) return;
-    
+    if (!notification || !notification.parentNode) {
+      return;
+    }
+
     notification.classList.add('hide');
     setTimeout(() => {
       if (notification.parentNode) {
@@ -83,7 +85,7 @@ export default class NotificationManager {
       success: '✅',
       error: '❌',
       warning: '⚠️',
-      info: 'ℹ️'
+      info: 'ℹ️',
     };
     return icons[type] || icons.info;
   }
@@ -137,7 +139,7 @@ export class LoadingManager {
   }
 
   bindEvents() {
-    window.addEventListener('showLoading', (e) => {
+    window.addEventListener('showLoading', e => {
       this.show(e.detail?.message);
     });
 
@@ -150,18 +152,18 @@ export class LoadingManager {
     this.loadingCount++;
     const overlay = document.getElementById('loading-overlay');
     const textElement = overlay.querySelector('.loading-text');
-    
+
     if (textElement) {
       textElement.textContent = message;
     }
-    
+
     overlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
   }
 
   hide() {
     this.loadingCount = Math.max(0, this.loadingCount - 1);
-    
+
     if (this.loadingCount === 0) {
       const overlay = document.getElementById('loading-overlay');
       overlay.classList.add('hidden');

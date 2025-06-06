@@ -182,7 +182,9 @@ export default class ProfilePage {
                 >${profile.address || ''}</textarea>
               </div>
 
-              ${this.isEditing ? `
+              ${
+                this.isEditing
+                  ? `
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary">
                     💾 Simpan Perubahan
@@ -191,7 +193,9 @@ export default class ProfilePage {
                     ❌ Batal
                   </button>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
             </form>
           </div>
 
@@ -391,15 +395,15 @@ export default class ProfilePage {
   }
 
   formatDate(dateString) {
-    if (!dateString) return null;
-    
+    if (!dateString) {return null;}
+
     try {
       return new Date(dateString).toLocaleDateString('id-ID', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch {
       return 'Tidak valid';
@@ -407,7 +411,7 @@ export default class ProfilePage {
   }
 
   async afterRender() {
-    if (!authManager.requireAuth()) return;
+    if (!authManager.requireAuth()) {return;}
 
     this.bindEvents();
     await this.loadProfile();
@@ -422,31 +426,31 @@ export default class ProfilePage {
     // Tab switching
     const tabBtns = document.querySelectorAll('.tab-btn');
     tabBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => this.switchTab(e));
+      btn.addEventListener('click', e => this.switchTab(e));
     });
 
     // Profile editing
     const editProfileBtn = document.getElementById('editProfileBtn');
     const profileForm = document.getElementById('profileForm');
     const cancelEditBtn = document.getElementById('cancelEditBtn');
-    
+
     editProfileBtn?.addEventListener('click', () => this.toggleEdit());
-    profileForm?.addEventListener('submit', (e) => this.handleProfileSubmit(e));
+    profileForm?.addEventListener('submit', e => this.handleProfileSubmit(e));
     cancelEditBtn?.addEventListener('click', () => this.cancelEdit());
 
     // Password form
     const passwordForm = document.getElementById('passwordForm');
-    passwordForm?.addEventListener('submit', (e) => this.handlePasswordSubmit(e));
+    passwordForm?.addEventListener('submit', e => this.handlePasswordSubmit(e));
 
     // Password toggles
     const passwordToggles = document.querySelectorAll('.password-toggle');
     passwordToggles.forEach(toggle => {
-      toggle.addEventListener('click', (e) => this.togglePassword(e));
+      toggle.addEventListener('click', e => this.togglePassword(e));
     });
 
     // Password strength
     const newPasswordInput = document.getElementById('newPassword');
-    newPasswordInput?.addEventListener('input', (e) => this.updatePasswordStrength(e));
+    newPasswordInput?.addEventListener('input', e => this.updatePasswordStrength(e));
 
     // Delete account
     const deleteAccountBtn = document.getElementById('deleteAccountBtn');
@@ -455,14 +459,14 @@ export default class ProfilePage {
     // Statistics actions
     const viewHistoryBtn = document.getElementById('viewHistoryBtn');
     const exportStatsBtn = document.getElementById('exportStatsBtn');
-    
+
     viewHistoryBtn?.addEventListener('click', () => this.navigateToHistory());
     exportStatsBtn?.addEventListener('click', () => this.exportStatistics());
   }
 
   switchTab(e) {
     const tab = e.target.dataset.tab;
-    if (tab === this.activeTab) return;
+    if (tab === this.activeTab) {return;}
 
     this.activeTab = tab;
 
@@ -476,7 +480,7 @@ export default class ProfilePage {
     document.querySelectorAll('.tab-panel').forEach(panel => {
       panel.classList.remove('active');
     });
-    const targetPanel = document.getElementById(tab + 'Panel');
+    const targetPanel = document.getElementById(`${tab  }Panel`);
     if (targetPanel) {
       targetPanel.classList.add('active');
     }
@@ -490,22 +494,23 @@ export default class ProfilePage {
   async loadProfile() {
     try {
       this.setLoadingState(true);
-      
+
       const response = await apiService.getUserProfile();
       this.profileData = response.data;
-      
+
       // Re-render profile tab
       const profilePanel = document.getElementById('profilePanel');
       if (profilePanel) {
         profilePanel.innerHTML = this.renderProfileTab();
         this.rebindProfileEvents();
       }
-      
     } catch (error) {
       console.error('Error loading profile:', error);
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'Gagal memuat data profil'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: 'Gagal memuat data profil',
+        }),
+      );
     } finally {
       this.setLoadingState(false);
     }
@@ -515,15 +520,15 @@ export default class ProfilePage {
     const editProfileBtn = document.getElementById('editProfileBtn');
     const profileForm = document.getElementById('profileForm');
     const cancelEditBtn = document.getElementById('cancelEditBtn');
-    
+
     editProfileBtn?.addEventListener('click', () => this.toggleEdit());
-    profileForm?.addEventListener('submit', (e) => this.handleProfileSubmit(e));
+    profileForm?.addEventListener('submit', e => this.handleProfileSubmit(e));
     cancelEditBtn?.addEventListener('click', () => this.cancelEdit());
   }
 
   toggleEdit() {
     this.isEditing = !this.isEditing;
-    
+
     // Re-render profile tab with edit state
     const profilePanel = document.getElementById('profilePanel');
     if (profilePanel) {
@@ -539,7 +544,7 @@ export default class ProfilePage {
 
   async handleProfileSubmit(e) {
     e.preventDefault();
-    
+
     try {
       const formData = new FormData(e.target);
       const profileData = {
@@ -549,27 +554,32 @@ export default class ProfilePage {
           firstName: formData.get('firstName'),
           lastName: formData.get('lastName'),
           phone: formData.get('phone'),
-          address: formData.get('address')
+          address: formData.get('address'),
         }
       };
 
-      window.dispatchEvent(new CustomEvent('showLoading', {
-        detail: { message: 'Menyimpan perubahan...' }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showLoading', {
+          detail: { message: 'Menyimpan perubahan...' },
+        }),
+      );
 
       await apiService.updateUserProfile(profileData);
-      
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Profil berhasil diperbarui!'
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Profil berhasil diperbarui!',
+        }),
+      );
 
       this.isEditing = false;
       await this.loadProfile();
-      
     } catch (error) {
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'Gagal memperbarui profil'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: 'Gagal memperbarui profil',
+        }),
+      );
     } finally {
       window.dispatchEvent(new CustomEvent('hideLoading'));
     }
@@ -577,7 +587,7 @@ export default class ProfilePage {
 
   async handlePasswordSubmit(e) {
     e.preventDefault();
-    
+
     const formData = new FormData(e.target);
     const currentPassword = formData.get('currentPassword');
     const newPassword = formData.get('newPassword');
@@ -589,32 +599,37 @@ export default class ProfilePage {
     }
 
     try {
-      window.dispatchEvent(new CustomEvent('showLoading', {
-        detail: { message: 'Mengubah password...' }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showLoading', {
+          detail: { message: 'Mengubah password...' },
+        }),
+      );
 
       await apiService.changePassword({
         currentPassword,
-        newPassword
+        newPassword,
       });
-      
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Password berhasil diubah!'
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Password berhasil diubah!',
+        }),
+      );
 
       // Reset form
       e.target.reset();
-      
     } catch (error) {
       let errorMessage = 'Gagal mengubah password';
-      
+
       if (error.message.includes('incorrect') || error.message.includes('current')) {
         errorMessage = 'Password saat ini salah';
       }
-      
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: errorMessage
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: errorMessage,
+        }),
+      );
     } finally {
       window.dispatchEvent(new CustomEvent('hideLoading'));
     }
@@ -642,7 +657,8 @@ export default class ProfilePage {
     }
 
     if (!confirmPassword) {
-      document.getElementById('confirmPasswordError').textContent = 'Konfirmasi password harus diisi';
+      document.getElementById('confirmPasswordError').textContent =
+        'Konfirmasi password harus diisi';
       isValid = false;
     } else if (newPassword !== confirmPassword) {
       document.getElementById('confirmPasswordError').textContent = 'Password tidak cocok';
@@ -656,7 +672,7 @@ export default class ProfilePage {
     const targetId = e.target.dataset.target;
     const input = document.getElementById(targetId);
     const icon = e.target;
-    
+
     if (input.type === 'password') {
       input.type = 'text';
       icon.textContent = '🙈';
@@ -673,7 +689,7 @@ export default class ProfilePage {
     const strengthText = strengthElement.querySelector('.strength-text');
 
     const strength = this.calculatePasswordStrength(password);
-    
+
     strengthFill.style.width = `${strength.percentage}%`;
     strengthFill.className = `strength-fill strength-${strength.level}`;
     strengthText.textContent = strength.text;
@@ -687,15 +703,15 @@ export default class ProfilePage {
     let score = 0;
 
     // Length
-    if (password.length >= 6) score += 20;
-    if (password.length >= 8) score += 10;
-    if (password.length >= 12) score += 10;
+    if (password.length >= 6) {score += 20;}
+    if (password.length >= 8) {score += 10;}
+    if (password.length >= 12) {score += 10;}
 
     // Character types
-    if (/[a-z]/.test(password)) score += 15;
-    if (/[A-Z]/.test(password)) score += 15;
-    if (/[0-9]/.test(password)) score += 15;
-    if (/[^A-Za-z0-9]/.test(password)) score += 15;
+    if (/[a-z]/.test(password)) {score += 15;}
+    if (/[A-Z]/.test(password)) {score += 15;}
+    if (/[0-9]/.test(password)) {score += 15;}
+    if (/[^A-Za-z0-9]/.test(password)) {score += 15;}
 
     let level, text;
     if (score < 30) {
@@ -718,42 +734,47 @@ export default class ProfilePage {
   async handleDeleteAccount() {
     const confirmed = confirm(
       'PERINGATAN: Tindakan ini akan menghapus akun Anda secara permanen!\n\n' +
-      'Semua data termasuk riwayat prediksi akan hilang dan tidak dapat dipulihkan.\n\n' +
-      'Apakah Anda yakin ingin melanjutkan?'
+        'Semua data termasuk riwayat prediksi akan hilang dan tidak dapat dipulihkan.\n\n' +
+        'Apakah Anda yakin ingin melanjutkan?',
     );
-    
-    if (!confirmed) return;
+
+    if (!confirmed) {return;}
 
     const password = prompt('Masukkan password Anda untuk konfirmasi:');
-    if (!password) return;
+    if (!password) {return;}
 
     try {
-      window.dispatchEvent(new CustomEvent('showLoading', {
-        detail: { message: 'Menghapus akun...' }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showLoading', {
+          detail: { message: 'Menghapus akun...' },
+        }),
+      );
 
       await apiService.deleteAccount({ password });
-      
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Akun berhasil dihapus. Terima kasih telah menggunakan layanan kami.'
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Akun berhasil dihapus. Terima kasih telah menggunakan layanan kami.',
+        }),
+      );
 
       // Logout and redirect
       setTimeout(async () => {
         await authManager.logout();
         window.dispatchEvent(new CustomEvent('navigate', { detail: '/login' }));
       }, 2000);
-      
     } catch (error) {
       let errorMessage = 'Gagal menghapus akun';
-      
+
       if (error.message.includes('password')) {
         errorMessage = 'Password yang Anda masukkan salah';
       }
-      
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: errorMessage
-      }));
+
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: errorMessage,
+        }),
+      );
     } finally {
       window.dispatchEvent(new CustomEvent('hideLoading'));
     }
@@ -764,10 +785,9 @@ export default class ProfilePage {
       // Load prediction history for statistics
       const response = await apiService.getPredictionHistory({ limit: 50 });
       const predictions = response.data.predictions || [];
-      
+
       this.updateStatisticsDisplay(predictions);
       this.updateActivityList(predictions.slice(0, 5));
-      
     } catch (error) {
       console.error('Error loading statistics:', error);
     }
@@ -775,12 +795,12 @@ export default class ProfilePage {
 
   updateStatisticsDisplay(predictions) {
     const total = predictions.length;
-    const healthy = predictions.filter(p => 
-      p.predictedClass.toLowerCase().includes('healthy')
+    const healthy = predictions.filter(p =>
+      p.predictedClass.toLowerCase().includes('healthy'),
     ).length;
     const diseased = total - healthy;
-    const avgConfidence = total > 0 ? 
-      Math.round(predictions.reduce((sum, p) => sum + p.confidence, 0) / total) : 0;
+    const avgConfidence =
+      total > 0 ? Math.round(predictions.reduce((sum, p) => sum + p.confidence, 0) / total) : 0;
 
     document.getElementById('totalPredictions').textContent = total;
     document.getElementById('healthyCount').textContent = healthy;
@@ -790,7 +810,7 @@ export default class ProfilePage {
 
   updateActivityList(recentPredictions) {
     const activityList = document.getElementById('activityList');
-    
+
     if (!recentPredictions || recentPredictions.length === 0) {
       activityList.innerHTML = `
         <div class="empty-state">
@@ -800,7 +820,9 @@ export default class ProfilePage {
       return;
     }
 
-    activityList.innerHTML = recentPredictions.map(prediction => `
+    activityList.innerHTML = recentPredictions
+      .map(
+        prediction => `
       <div class="activity-item">
         <div class="activity-icon">
           ${prediction.predictedClass.toLowerCase().includes('healthy') ? '🌱' : '🦠'}
@@ -814,7 +836,9 @@ export default class ProfilePage {
           </div>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join('');
   }
 
   formatDiseaseName(disease) {
@@ -829,23 +853,26 @@ export default class ProfilePage {
     try {
       const response = await apiService.getPredictionHistory({ limit: 1000 });
       const predictions = response.data.predictions || [];
-      
+
       const csvData = this.convertStatsToCSV(predictions);
       this.downloadCSV(csvData, 'my-statistics.csv');
-      
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Statistik berhasil diekspor'
-      }));
-      
+
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Statistik berhasil diekspor',
+        }),
+
     } catch (error) {
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'Gagal mengekspor statistik'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: 'Gagal mengekspor statistik',
+        }),
+      );
     }
   }
 
   convertStatsToCSV(predictions) {
-    if (!predictions || predictions.length === 0) return '';
+    if (!predictions || predictions.length === 0) {return '';}
 
     const headers = ['Tanggal', 'Prediksi', 'Confidence (%)', 'Status', 'Catatan'];
     const rows = predictions.map(pred => [
@@ -853,7 +880,7 @@ export default class ProfilePage {
       this.formatDiseaseName(pred.predictedClass),
       Math.round(pred.confidence),
       pred.predictedClass.toLowerCase().includes('healthy') ? 'Sehat' : 'Penyakit',
-      pred.notes || ''
+      pred.notes || '',
     ]);
 
     const csvContent = [headers, ...rows]
@@ -866,7 +893,7 @@ export default class ProfilePage {
   downloadCSV(csvContent, filename) {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
-    
+
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);

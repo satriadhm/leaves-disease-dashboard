@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable prettier/prettier */
 // src/components/FileUpload.js
 import apiService from '../services/api.js';
 
@@ -89,13 +91,16 @@ export default class FileUpload {
           
           <div class="preview-actions">
             <button class="btn btn-success" id="analyzeBtn" ${this.isAnalyzing ? 'disabled' : ''}>
-              ${this.isAnalyzing ? `
+              ${this.isAnalyzing
+        ? `
                 <span class="btn-spinner"></span>
                 <span class="btn-text">Menganalisis...</span>
-              ` : `
+              `
+        : `
                 <span class="btn-icon">🔬</span>
                 <span class="btn-text">Analisis Gambar</span>
-              `}
+              `
+      }
             </button>
             <button class="btn btn-secondary" id="cancelBtn">
               <span class="btn-icon">🗑️</span>
@@ -152,13 +157,13 @@ export default class FileUpload {
 
     // File selection events
     selectFileBtn?.addEventListener('click', () => fileInput?.click());
-    fileInput?.addEventListener('change', (e) => this.handleFileSelect(e));
+    fileInput?.addEventListener('change', e => this.handleFileSelect(e));
 
     // Drag and drop events
-    uploadArea?.addEventListener('dragover', (e) => this.handleDragOver(e));
-    uploadArea?.addEventListener('dragleave', (e) => this.handleDragLeave(e));
-    uploadArea?.addEventListener('drop', (e) => this.handleDrop(e));
-    uploadArea?.addEventListener('click', (e) => {
+    uploadArea?.addEventListener('dragover', e => this.handleDragOver(e));
+    uploadArea?.addEventListener('dragleave', e => this.handleDragLeave(e));
+    uploadArea?.addEventListener('drop', e => this.handleDrop(e));
+    uploadArea?.addEventListener('click', e => {
       if (e.target === uploadArea || e.target.closest('.upload-content')) {
         fileInput?.click();
       }
@@ -170,7 +175,7 @@ export default class FileUpload {
     removeFileBtn?.addEventListener('click', () => this.cancelSelection());
 
     // Notes character counter
-    imageNotes?.addEventListener('input', (e) => this.updateCharCounter(e));
+    imageNotes?.addEventListener('input', e => this.updateCharCounter(e));
   }
 
   bindResetListener() {
@@ -182,7 +187,7 @@ export default class FileUpload {
   handleDragOver(e) {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!this.isDragging) {
       this.isDragging = true;
       const uploadArea = document.getElementById('uploadArea');
@@ -193,7 +198,7 @@ export default class FileUpload {
   handleDragLeave(e) {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Only remove drag state if leaving the upload area completely
     const uploadArea = document.getElementById('uploadArea');
     if (!uploadArea?.contains(e.relatedTarget)) {
@@ -205,7 +210,7 @@ export default class FileUpload {
   handleDrop(e) {
     e.preventDefault();
     e.stopPropagation();
-    
+
     this.isDragging = false;
     const uploadArea = document.getElementById('uploadArea');
     uploadArea?.classList.remove('drag-over');
@@ -226,7 +231,7 @@ export default class FileUpload {
   processFile(file) {
     // Reset any previous state
     this.selectedFile = null;
-    
+
     // Validate file type
     if (!this.allowedTypes.includes(file.type)) {
       this.updateStatus('error', 'Format file tidak didukung. Gunakan JPG, PNG, atau WebP.');
@@ -235,7 +240,10 @@ export default class FileUpload {
 
     // Validate file size
     if (file.size > this.maxFileSize) {
-      this.updateStatus('error', `Ukuran file terlalu besar. Maksimal ${this.formatFileSize(this.maxFileSize)}.`);
+      this.updateStatus(
+        'error',
+        `Ukuran file terlalu besar. Maksimal ${this.formatFileSize(this.maxFileSize)}.`,
+      );
       return;
     }
 
@@ -244,13 +252,17 @@ export default class FileUpload {
     img.onload = () => {
       // Check minimum resolution
       if (img.width < 224 || img.height < 224) {
-        this.updateStatus('warning', 'Resolusi gambar terlalu kecil. Minimal 224x224 pixel untuk hasil optimal.');
+        this.updateStatus(
+          'warning',
+          'Resolusi gambar terlalu kecil. Minimal 224x224 pixel untuk hasil optimal.',
+        );
+        return;
       }
-      
+
       this.selectedFile = file;
       this.showPreview(file, { width: img.width, height: img.height });
     };
-    
+
     img.onerror = () => {
       this.updateStatus('error', 'File rusak atau bukan gambar yang valid.');
     };
@@ -263,7 +275,7 @@ export default class FileUpload {
   showPreview(file, dimensions) {
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = e => {
       const uploadArea = document.getElementById('uploadArea');
       const filePreview = document.getElementById('filePreview');
       const previewImage = document.getElementById('previewImage');
@@ -320,7 +332,7 @@ export default class FileUpload {
     const counter = document.getElementById('notesCounter');
     const length = e.target.value.length;
     counter.textContent = length;
-    
+
     // Update counter color based on length
     counter.className = '';
     if (length > 450) {
@@ -331,15 +343,17 @@ export default class FileUpload {
   }
 
   async analyzeImage() {
-    if (!this.selectedFile || this.isAnalyzing) return;
+    if (!this.selectedFile || this.isAnalyzing) {
+      return;
+    }
 
     try {
       this.setAnalyzingState(true);
-      
+
       // Create FormData
       const formData = new FormData();
       formData.append('image', this.selectedFile);
-      
+
       // Add notes if provided
       const notes = document.getElementById('imageNotes')?.value.trim();
       if (notes) {
@@ -359,21 +373,22 @@ export default class FileUpload {
         recommendation: this.getRecommendation(response.data.predictedClass),
         allPredictions: response.data.allPredictions,
         processingTime: response.data.processingTime,
-        notes: notes
+        notes,
       };
 
       // Dispatch result event
-      window.dispatchEvent(new CustomEvent('detectionResult', {
-        detail: result
-      }));
+      window.dispatchEvent(
+        new CustomEvent('detectionResult', {
+          detail: result,
+        }),
+      );
 
       this.updateStatus('success', 'Analisis selesai! Lihat hasil di bawah.');
-
     } catch (error) {
       console.error('Analysis error:', error);
-      
+
       let errorMessage = 'Gagal menganalisis gambar. ';
-      
+
       if (error.message.includes('network') || error.message.includes('fetch')) {
         errorMessage += 'Periksa koneksi internet Anda.';
       } else if (error.message.includes('size') || error.message.includes('large')) {
@@ -383,9 +398,8 @@ export default class FileUpload {
       } else {
         errorMessage += 'Silakan coba lagi.';
       }
-      
+
       this.updateStatus('error', errorMessage);
-      
     } finally {
       this.setAnalyzingState(false);
     }
@@ -394,38 +408,48 @@ export default class FileUpload {
   getRecommendation(predictedClass) {
     const recommendations = {
       // Healthy
-      'healthy': 'Tanaman dalam kondisi sehat. Lanjutkan perawatan rutin.',
-      
+      healthy: 'Tanaman dalam kondisi sehat. Lanjutkan perawatan rutin.',
+
       // Chili diseases
-      'chili__leaf_curl': 'Tingkatkan drainase tanah dan kurangi kelembaban. Gunakan mulsa untuk menjaga kelembaban tanah tetap stabil.',
-      'chili__leaf_spot': 'Buang daun yang terinfeksi dan tingkatkan sirkulasi udara. Aplikasikan fungisida jika diperlukan.',
-      'chili__whitefly': 'Gunakan perangkap kuning lengket dan aplikasikan insektisida ramah lingkungan.',
-      
-      // Corn diseases  
-      'corn__common_rust': 'Aplikasikan fungisida preventif dan pastikan rotasi tanaman yang baik.',
-      'corn__gray_leaf_spot': 'Tingkatkan jarak tanam untuk sirkulasi udara yang lebih baik dan gunakan varietas tahan.',
-      'corn__northern_leaf_blight': 'Buang sisa tanaman yang terinfeksi dan aplikasikan fungisida sesuai kebutuhan.',
-      
+      chili__leaf_curl:
+        'Tingkatkan drainase tanah dan kurangi kelembaban. Gunakan mulsa untuk menjaga kelembaban tanah tetap stabil.',
+      chili__leaf_spot:
+        'Buang daun yang terinfeksi dan tingkatkan sirkulasi udara. Aplikasikan fungisida jika diperlukan.',
+      chili__whitefly:
+        'Gunakan perangkap kuning lengket dan aplikasikan insektisida ramah lingkungan.',
+
+      // Corn diseases
+      corn__common_rust: 'Aplikasikan fungisida preventif dan pastikan rotasi tanaman yang baik.',
+      corn__gray_leaf_spot:
+        'Tingkatkan jarak tanam untuk sirkulasi udara yang lebih baik dan gunakan varietas tahan.',
+      corn__northern_leaf_blight:
+        'Buang sisa tanaman yang terinfeksi dan aplikasikan fungisida sesuai kebutuhan.',
+
       // Rice diseases
-      'rice__brown_spot': 'Perbaiki manajemen air dan nutrisi tanaman. Aplikasikan fungisida jika diperlukan.',
-      'rice__leaf_blast': 'Kurangi nitrogen berlebih dan tingkatkan drainase sawah.',
-      'rice__neck_blast': 'Gunakan varietas tahan dan aplikasikan fungisida pada tahap pembungaan.',
-      
+      rice__brown_spot:
+        'Perbaiki manajemen air dan nutrisi tanaman. Aplikasikan fungisida jika diperlukan.',
+      rice__leaf_blast: 'Kurangi nitrogen berlebih dan tingkatkan drainase sawah.',
+      rice__neck_blast: 'Gunakan varietas tahan dan aplikasikan fungisida pada tahap pembungaan.',
+
       // Tomato diseases
-      'tomato__early_blight': 'Tingkatkan sirkulasi udara dan hindari penyiraman pada daun. Gunakan mulsa.',
-      'tomato__late_blight': 'Aplikasikan fungisida preventif dan pastikan drainase yang baik.',
-      'tomato__yellow_leaf_curl_virus': 'Kontrol kutu kebul sebagai vektor virus dan gunakan varietas tahan.'
+      tomato__early_blight:
+        'Tingkatkan sirkulasi udara dan hindari penyiraman pada daun. Gunakan mulsa.',
+      tomato__late_blight: 'Aplikasikan fungisida preventif dan pastikan drainase yang baik.',
+      tomato__yellow_leaf_curl_virus:
+        'Kontrol kutu kebul sebagai vektor virus dan gunakan varietas tahan.',
     };
 
     const key = predictedClass?.toLowerCase().replace(/[^a-z_]/g, '');
-    return recommendations[key] || 'Konsultasikan dengan ahli pertanian untuk penanganan yang tepat.';
+    return (
+      recommendations[key] || 'Konsultasikan dengan ahli pertanian untuk penanganan yang tepat.'
+    );
   }
 
   setAnalyzingState(analyzing) {
     this.isAnalyzing = analyzing;
     const analyzeBtn = document.getElementById('analyzeBtn');
     const cancelBtn = document.getElementById('cancelBtn');
-    
+
     if (analyzing) {
       analyzeBtn.disabled = true;
       analyzeBtn.innerHTML = `
@@ -444,24 +468,28 @@ export default class FileUpload {
   }
 
   formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
 
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   }
 
   updateStatus(type, message) {
     const statusElement = document.getElementById('uploadStatus');
-    if (!statusElement) return;
+    if (!statusElement) {
+      return;
+    }
 
     const iconMap = {
       info: '💡',
       success: '✅',
       warning: '⚠️',
-      error: '❌'
+      error: '❌',
     };
 
     statusElement.innerHTML = `

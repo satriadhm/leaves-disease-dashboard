@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // src/components/AdminDashboard.js
 import apiService from '../services/api.js';
 import authManager from '../utils/auth.js';
@@ -10,7 +11,7 @@ export default class AdminDashboard {
     this.stats = {
       users: {},
       predictions: {},
-      system: {}
+      system: {},
     };
     this.isLoading = false;
     this.currentPage = 1;
@@ -407,7 +408,9 @@ export default class AdminDashboard {
   }
 
   async afterRender() {
-    if (!authManager.requireRole('admin')) return;
+    if (!authManager.requireRole('admin')) {
+      return;
+    }
 
     this.bindEvents();
     await this.loadDashboardData();
@@ -426,7 +429,7 @@ export default class AdminDashboard {
     // Tab switching
     const tabBtns = document.querySelectorAll('.tab-btn');
     tabBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => this.switchTab(e));
+      btn.addEventListener('click', e => this.switchTab(e));
     });
 
     // Search and filters
@@ -453,7 +456,9 @@ export default class AdminDashboard {
     const dateFromFilter = document.getElementById('dateFromFilter');
     const dateToFilter = document.getElementById('dateToFilter');
 
-    predictionSearch?.addEventListener('input', () => this.debounce(() => this.filterPredictions(), 300));
+    predictionSearch?.addEventListener('input', () =>
+      this.debounce(() => this.filterPredictions(), 300)
+    );
     predictionTypeFilter?.addEventListener('change', () => this.filterPredictions());
     diseaseFilter?.addEventListener('change', () => this.filterPredictions());
     dateFromFilter?.addEventListener('change', () => this.filterPredictions());
@@ -474,7 +479,9 @@ export default class AdminDashboard {
 
   switchTab(e) {
     const tab = e.target.dataset.tab;
-    if (tab === this.activeTab) return;
+    if (tab === this.activeTab) {
+      return;
+    }
 
     this.activeTab = tab;
 
@@ -488,7 +495,7 @@ export default class AdminDashboard {
     document.querySelectorAll('.tab-panel').forEach(panel => {
       panel.classList.remove('active');
     });
-    const targetPanel = document.getElementById(tab + 'Panel');
+    const targetPanel = document.getElementById(`${tab}Panel`);
     if (targetPanel) {
       targetPanel.classList.add('active');
     }
@@ -500,18 +507,16 @@ export default class AdminDashboard {
   async loadDashboardData() {
     try {
       this.setLoadingState(true);
-      
-      // Load all dashboard data
-      await Promise.all([
-        this.loadOverviewData(),
-        this.loadSystemHealth()
-      ]);
 
+      // Load all dashboard data
+      await Promise.all([this.loadOverviewData(), this.loadSystemHealth()]);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'Gagal memuat data dashboard'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: 'Gagal memuat data dashboard',
+        })
+      );
     } finally {
       this.setLoadingState(false);
     }
@@ -542,7 +547,6 @@ export default class AdminDashboard {
       this.stats.predictions = predictionStatsResponse.data;
 
       this.updateOverviewDisplay();
-      
     } catch (error) {
       console.error('Error loading overview data:', error);
     }
@@ -550,19 +554,21 @@ export default class AdminDashboard {
 
   updateOverviewDisplay() {
     const { users, predictions } = this.stats;
-    
+
     // Update user stats
     document.getElementById('totalUsers').textContent = users.overview?.totalUsers || 0;
     document.getElementById('activeUsers').textContent = users.overview?.activeUsers || 0;
 
     // Update prediction stats
-    document.getElementById('totalPredictions').textContent = predictions.overview?.totalPredictions || 0;
-    document.getElementById('healthyPredictions').textContent = 
+    document.getElementById('totalPredictions').textContent =
+      predictions.overview?.totalPredictions || 0;
+    document.getElementById('healthyPredictions').textContent =
       predictions.predictionsByClass?.filter(p => p._id.includes('healthy')).length || 0;
-    document.getElementById('diseasedPredictions').textContent = 
-      (predictions.overview?.totalPredictions || 0) - (predictions.predictionsByClass?.filter(p => p._id.includes('healthy')).length || 0);
-    document.getElementById('avgConfidence').textContent = 
-      Math.round(predictions.overview?.avgProcessingTime || 0) + '%';
+    document.getElementById('diseasedPredictions').textContent =
+      (predictions.overview?.totalPredictions || 0) -
+      (predictions.predictionsByClass?.filter(p => p._id.includes('healthy')).length || 0);
+    document.getElementById('avgConfidence').textContent =
+      `${Math.round(predictions.overview?.avgProcessingTime || 0)}%`;
 
     this.renderCharts();
     this.loadRecentActivity();
@@ -578,23 +584,27 @@ export default class AdminDashboard {
   renderDailyPredictionsChart() {
     const container = document.getElementById('dailyPredictionsChart');
     const data = this.stats.predictions.predictionsByDate || [];
-    
+
     if (data.length === 0) {
       container.innerHTML = '<p class="no-data">Tidak ada data</p>';
       return;
     }
 
     const maxCount = Math.max(...data.map(d => d.count));
-    
+
     container.innerHTML = `
       <div class="simple-chart">
-        ${data.map(item => `
+        ${data
+          .map(
+            item => `
           <div class="chart-bar">
             <div class="bar-label">${new Date(item._id).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}</div>
             <div class="bar" style="height: ${(item.count / maxCount) * 100}%"></div>
             <div class="bar-value">${item.count}</div>
           </div>
-        `).join('')}
+        `
+          )
+          .join('')}
       </div>
     `;
   }
@@ -602,23 +612,28 @@ export default class AdminDashboard {
   renderDiseaseDistributionChart() {
     const container = document.getElementById('diseaseDistributionChart');
     const data = this.stats.predictions.predictionsByClass || [];
-    
+
     if (data.length === 0) {
       container.innerHTML = '<p class="no-data">Tidak ada data</p>';
       return;
     }
 
     const total = data.reduce((sum, item) => sum + item.count, 0);
-    
+
     container.innerHTML = `
       <div class="pie-chart">
-        ${data.slice(0, 5).map(item => `
+        ${data
+          .slice(0, 5)
+          .map(
+            item => `
           <div class="pie-item">
             <div class="pie-color" style="background: hsl(${Math.random() * 360}, 70%, 60%)"></div>
             <div class="pie-label">${this.formatDiseaseName(item._id)}</div>
             <div class="pie-value">${Math.round((item.count / total) * 100)}%</div>
           </div>
-        `).join('')}
+        `
+          )
+          .join('')}
       </div>
     `;
   }
@@ -627,15 +642,17 @@ export default class AdminDashboard {
     try {
       const response = await apiService.getAllPredictions({ limit: 10 });
       const activities = response.data.predictions || [];
-      
+
       const activityList = document.getElementById('recentActivityList');
-      
+
       if (activities.length === 0) {
         activityList.innerHTML = '<p class="no-data">Tidak ada aktivitas terbaru</p>';
         return;
       }
 
-      activityList.innerHTML = activities.map(activity => `
+      activityList.innerHTML = activities
+        .map(
+          activity => `
         <div class="activity-item">
           <div class="activity-icon">
             ${activity.predictedClass.includes('healthy') ? '🌱' : '🦠'}
@@ -649,8 +666,9 @@ export default class AdminDashboard {
             </div>
           </div>
         </div>
-      `).join('');
-      
+      `
+        )
+        .join('');
     } catch (error) {
       console.error('Error loading recent activity:', error);
     }
@@ -658,14 +676,13 @@ export default class AdminDashboard {
 
   async loadUsersData() {
     try {
-      const response = await apiService.getAllUsers({ 
+      const response = await apiService.getAllUsers({
         page: this.currentPage,
-        limit: this.itemsPerPage 
+        limit: this.itemsPerPage,
       });
-      
+
       this.users = response.data.users || [];
       this.renderUsersTable();
-      
     } catch (error) {
       console.error('Error loading users data:', error);
     }
@@ -673,7 +690,7 @@ export default class AdminDashboard {
 
   renderUsersTable() {
     const tbody = document.getElementById('usersTableBody');
-    
+
     if (this.users.length === 0) {
       tbody.innerHTML = `
         <tr>
@@ -683,7 +700,9 @@ export default class AdminDashboard {
       return;
     }
 
-    tbody.innerHTML = this.users.map(user => `
+    tbody.innerHTML = this.users
+      .map(
+        user => `
       <tr>
         <td>
           <div class="user-avatar small">
@@ -716,19 +735,20 @@ export default class AdminDashboard {
           </div>
         </td>
       </tr>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   async loadPredictionsData() {
     try {
-      const response = await apiService.getAllPredictions({ 
+      const response = await apiService.getAllPredictions({
         page: this.currentPage,
-        limit: this.itemsPerPage 
+        limit: this.itemsPerPage,
       });
-      
+
       this.predictions = response.data.predictions || [];
       this.renderPredictionsTable();
-      
     } catch (error) {
       console.error('Error loading predictions data:', error);
     }
@@ -736,7 +756,7 @@ export default class AdminDashboard {
 
   renderPredictionsTable() {
     const tbody = document.getElementById('predictionsTableBody');
-    
+
     if (this.predictions.length === 0) {
       tbody.innerHTML = `
         <tr>
@@ -746,7 +766,9 @@ export default class AdminDashboard {
       return;
     }
 
-    tbody.innerHTML = this.predictions.map(prediction => `
+    tbody.innerHTML = this.predictions
+      .map(
+        prediction => `
       <tr>
         <td>
           <img src="${prediction.imageUrl}" alt="Plant" class="table-image">
@@ -781,36 +803,42 @@ export default class AdminDashboard {
           </div>
         </td>
       </tr>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   async loadSystemHealth() {
     try {
       // Check API health
       this.updateHealthStatus('apiStatus', 'checking', 'Checking...');
-      
+
       const healthResponse = await apiService.getHealthStatus();
       this.updateHealthStatus('apiStatus', 'healthy', 'Connected');
-      
+
       // Check database
       this.updateHealthStatus('dbStatus', 'checking', 'Checking...');
-      const dbResponse = await apiService.getDatabaseHealth();
       this.updateHealthStatus('dbStatus', 'healthy', 'Connected');
-      
+
       // Check model
       this.updateHealthStatus('modelStatus', 'checking', 'Checking...');
       const modelResponse = await apiService.getModelHealth();
       const modelHealthy = modelResponse.data?.modelLoaded;
-      this.updateHealthStatus('modelStatus', modelHealthy ? 'healthy' : 'error', 
-        modelHealthy ? 'Loaded' : 'Not Loaded');
-      
+      this.updateHealthStatus(
+        'modelStatus',
+        modelHealthy ? 'healthy' : 'error',
+        modelHealthy ? 'Loaded' : 'Not Loaded'
+      );
+
       // Check network
-      this.updateHealthStatus('networkStatus', navigator.onLine ? 'healthy' : 'error',
-        navigator.onLine ? 'Online' : 'Offline');
-      
+      this.updateHealthStatus(
+        'networkStatus',
+        navigator.onLine ? 'healthy' : 'error',
+        navigator.onLine ? 'Online' : 'Offline'
+      );
+
       // Update system info
       this.updateSystemInfo(healthResponse, modelResponse);
-      
     } catch (error) {
       console.error('Error checking system health:', error);
       this.updateHealthStatus('apiStatus', 'error', 'Error');
@@ -821,8 +849,10 @@ export default class AdminDashboard {
 
   updateHealthStatus(elementId, status, text) {
     const element = document.getElementById(elementId);
-    if (!element) return;
-    
+    if (!element) {
+      return;
+    }
+
     element.innerHTML = `
       <div class="status-dot ${status}"></div>
       <span>${text}</span>
@@ -832,34 +862,37 @@ export default class AdminDashboard {
   updateSystemInfo(healthData, modelData) {
     document.getElementById('apiVersion').textContent = healthData.api_version || '2.0.0';
     document.getElementById('environment').textContent = healthData.environment || 'production';
-    document.getElementById('dbCollections').textContent = 
+    document.getElementById('dbCollections').textContent =
       Object.keys(healthData.database?.collections || {}).length || 0;
-    document.getElementById('modelClasses').textContent = 
-      modelData.data?.totalClasses || 16;
-    document.getElementById('tfBackend').textContent = 
-      modelData.data?.tfBackend || 'cpu';
-    document.getElementById('storageTypes').textContent = 
-      modelData.data?.storageConfig ? 
-        Object.keys(modelData.data.storageConfig).join(', ') : 'local, blob';
+    document.getElementById('modelClasses').textContent = modelData.data?.totalClasses || 16;
+    document.getElementById('tfBackend').textContent = modelData.data?.tfBackend || 'cpu';
+    document.getElementById('storageTypes').textContent = modelData.data?.storageConfig
+      ? Object.keys(modelData.data.storageConfig).join(', ')
+      : 'local, blob';
   }
 
   // System action methods
   async testApiConnection() {
     try {
-      window.dispatchEvent(new CustomEvent('showLoading', {
-        detail: { message: 'Testing API connection...' }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showLoading', {
+          detail: { message: 'Testing API connection...' },
+        })
+      );
 
       await apiService.getHealthStatus();
-      
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'API connection successful!'
-      }));
-      
+
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'API connection successful!',
+        })
+      );
     } catch (error) {
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'API connection failed: ' + error.message
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: `API connection failed: ${error.message}`,
+        })
+      );
     } finally {
       window.dispatchEvent(new CustomEvent('hideLoading'));
     }
@@ -867,26 +900,33 @@ export default class AdminDashboard {
 
   async testModel() {
     try {
-      window.dispatchEvent(new CustomEvent('showLoading', {
-        detail: { message: 'Testing AI model...' }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showLoading', {
+          detail: { message: 'Testing AI model...' },
+        })
+      );
 
       const response = await apiService.getModelHealth();
-      
+
       if (response.data?.modelLoaded) {
-        window.dispatchEvent(new CustomEvent('showSuccess', {
-          detail: 'AI model is working properly!'
-        }));
+        window.dispatchEvent(
+          new CustomEvent('showSuccess', {
+            detail: 'AI model is working properly!',
+          })
+        );
       } else {
-        window.dispatchEvent(new CustomEvent('showWarning', {
-          detail: 'AI model is not loaded properly'
-        }));
+        window.dispatchEvent(
+          new CustomEvent('showWarning', {
+            detail: 'AI model is not loaded properly',
+          })
+        );
       }
-      
     } catch (error) {
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'Model test failed: ' + error.message
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: `Model test failed: ${error.message}`,
+        })
+      );
     } finally {
       window.dispatchEvent(new CustomEvent('hideLoading'));
     }
@@ -896,11 +936,13 @@ export default class AdminDashboard {
     if (confirm('Are you sure you want to clear the cache? This will log out all users.')) {
       localStorage.clear();
       sessionStorage.clear();
-      
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Cache cleared successfully!'
-      }));
-      
+
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Cache cleared successfully!',
+        })
+      );
+
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -914,13 +956,13 @@ export default class AdminDashboard {
       userAgent: navigator.userAgent,
       url: window.location.href,
       stats: this.stats,
-      systemHealth: 'checked'
+      systemHealth: 'checked',
     };
-    
-    const blob = new Blob([JSON.stringify(logs, null, 2)], { 
-      type: 'application/json' 
+
+    const blob = new Blob([JSON.stringify(logs, null, 2)], {
+      type: 'application/json',
     });
-    
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -929,23 +971,27 @@ export default class AdminDashboard {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    
-    window.dispatchEvent(new CustomEvent('showSuccess', {
-      detail: 'Logs downloaded successfully!'
-    }));
+
+    window.dispatchEvent(
+      new CustomEvent('showSuccess', {
+        detail: 'Logs downloaded successfully!',
+      })
+    );
   }
 
   // Utility methods
   formatDate(dateString) {
-    if (!dateString) return null;
-    
+    if (!dateString) {
+      return null;
+    }
+
     try {
       return new Date(dateString).toLocaleDateString('id-ID', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch {
       return 'Invalid';
@@ -961,8 +1007,12 @@ export default class AdminDashboard {
   }
 
   getConfidenceClass(confidence) {
-    if (confidence >= 80) return 'high';
-    if (confidence >= 60) return 'medium';
+    if (confidence >= 80) {
+      return 'high';
+    }
+    if (confidence >= 60) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -990,29 +1040,33 @@ export default class AdminDashboard {
 
   async refreshData() {
     await this.loadDashboardData();
-    window.dispatchEvent(new CustomEvent('showSuccess', {
-      detail: 'Data refreshed successfully!'
-    }));
+    window.dispatchEvent(
+      new CustomEvent('showSuccess', {
+        detail: 'Data refreshed successfully!',
+      })
+    );
   }
 
   async exportAllData() {
     try {
-      window.dispatchEvent(new CustomEvent('showLoading', {
-        detail: { message: 'Exporting data...' }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showLoading', {
+          detail: { message: 'Exporting data...' },
+        })
+      );
 
       // Export all data
       const exportData = {
         timestamp: new Date().toISOString(),
         stats: this.stats,
         users: this.users,
-        predictions: this.predictions
+        predictions: this.predictions,
       };
-      
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
-        type: 'application/json' 
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: 'application/json',
       });
-      
+
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -1021,15 +1075,18 @@ export default class AdminDashboard {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Data exported successfully!'
-      }));
-      
+
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Data exported successfully!',
+        })
+      );
     } catch (error) {
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'Export failed: ' + error.message
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: `Export failed: ${error.message}`,
+        })
+      );
     } finally {
       window.dispatchEvent(new CustomEvent('hideLoading'));
     }

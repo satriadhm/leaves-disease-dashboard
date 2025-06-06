@@ -54,12 +54,15 @@ class ApiService {
     if (response.accessToken) {
       this.token = response.accessToken;
       localStorage.setItem('authToken', this.token);
-      localStorage.setItem('user', JSON.stringify({
-        id: response.id,
-        username: response.username,
-        email: response.email,
-        roles: response.roles
-      }));
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          id: response.id,
+          username: response.username,
+          email: response.email,
+          roles: response.roles,
+        })
+      );
     }
 
     return response;
@@ -99,7 +102,7 @@ class ApiService {
   async predictDisease(formData) {
     const url = `${this.baseURL}/api/predict`;
     const headers = {};
-    
+
     if (this.token) {
       headers['x-access-token'] = this.token;
     }

@@ -1,12 +1,14 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable indent */
 // src/components/HomePage.js
-import CameraCapture from "./CameraCapture.js";
-import FileUpload from "./FileUpload.js";
+import CameraCapture from './CameraCapture.js';
+import FileUpload from './FileUpload.js';
 import authManager from '../utils/auth.js';
 
 export default class HomePage {
   constructor() {
     this.user = authManager.getCurrentUser() || {};
-    this.activeTab = "upload"; // Default to upload tab
+    this.activeTab = 'upload'; // Default to upload tab
     this.lastPredictionResult = null;
   }
 
@@ -25,7 +27,8 @@ export default class HomePage {
               </div>
             </div>
             <div class="header-right">
-              ${isAuthenticated ? `
+              ${isAuthenticated
+        ? `
                 <div class="user-menu">
                   <div class="user-info">
                     <div class="user-avatar">
@@ -40,11 +43,14 @@ export default class HomePage {
                     <button class="btn btn-secondary" id="historyBtn" title="Riwayat Prediksi">
                       📊 Riwayat
                     </button>
-                    ${authManager.isAdmin() ? `
+                    ${authManager.isAdmin()
+          ? `
                       <button class="btn btn-secondary" id="dashboardBtn" title="Dashboard Admin">
                         ⚙️ Dashboard
                       </button>
-                    ` : ''}
+                    `
+          : ''
+        }
                     <button class="btn btn-secondary" id="profileBtn" title="Profil">
                       👤 Profil
                     </button>
@@ -53,12 +59,14 @@ export default class HomePage {
                     </button>
                   </div>
                 </div>
-              ` : `
+              `
+        : `
                 <div class="auth-buttons">
                   <a href="/login" class="btn btn-outline">Masuk</a>
                   <a href="/register" class="btn btn-primary">Daftar</a>
                 </div>
-              `}
+              `
+      }
             </div>
           </div>
         </header>
@@ -198,20 +206,27 @@ export default class HomePage {
             <span class="nav-icon">📷</span>
             <span class="nav-text">Kamera</span>
           </button>
-          ${isAuthenticated ? `
+          ${isAuthenticated
+        ? `
             <button class="mobile-nav-btn" id="mobileHistoryBtn">
               <span class="nav-icon">📊</span>
               <span class="nav-text">Riwayat</span>
             </button>
-          ` : ''}
+          `
+        : ''
+      }
         </div>
       </div>
     `;
   }
 
   getUserRole() {
-    if (authManager.isAdmin()) return 'Administrator';
-    if (authManager.isModerator()) return 'Moderator';
+    if (authManager.isAdmin()) {
+      return 'Administrator';
+    }
+    if (authManager.isModerator()) {
+      return 'Moderator';
+    }
     return 'User';
   }
 
@@ -219,7 +234,7 @@ export default class HomePage {
     this.bindEvents();
     this.initializeComponents();
     this.bindAuthStateListener();
-    
+
     // Show last prediction result if available
     if (this.lastPredictionResult) {
       this.displayPredictionResult(this.lastPredictionResult);
@@ -230,7 +245,7 @@ export default class HomePage {
     // Tab switching
     const tabBtns = document.querySelectorAll('.tab-btn, .mobile-nav-btn[data-tab]');
     tabBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => this.handleTabSwitch(e));
+      btn.addEventListener('click', e => this.handleTabSwitch(e));
     });
 
     // Navigation buttons
@@ -249,7 +264,7 @@ export default class HomePage {
     // Auth buttons for non-authenticated users
     const authButtons = document.querySelectorAll('.auth-buttons a');
     authButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', e => {
         e.preventDefault();
         const path = e.target.getAttribute('href');
         window.dispatchEvent(new CustomEvent('navigate', { detail: path }));
@@ -257,14 +272,14 @@ export default class HomePage {
     });
 
     // Listen for detection results
-    window.addEventListener('detectionResult', (e) => this.handleDetectionResult(e));
+    window.addEventListener('detectionResult', e => this.handleDetectionResult(e));
   }
 
   bindAuthStateListener() {
-    window.addEventListener('authStateChanged', (e) => {
-      const { isAuthenticated, user } = e.detail;
+    window.addEventListener('authStateChanged', e => {
+      const { isAuthenticated, user: eventUser } = e.detail;
       if (isAuthenticated) {
-        this.user = user;
+        this.user = eventUser;
       } else {
         this.user = {};
       }
@@ -296,11 +311,14 @@ export default class HomePage {
               <button class="btn btn-secondary" id="historyBtn" title="Riwayat Prediksi">
                 📊 Riwayat
               </button>
-              ${authManager.isAdmin() ? `
+              ${authManager.isAdmin()
+            ? `
                 <button class="btn btn-secondary" id="dashboardBtn" title="Dashboard Admin">
                   ⚙️ Dashboard
                 </button>
-              ` : ''}
+              `
+            : ''
+          }
               <button class="btn btn-secondary" id="profileBtn" title="Profil">
                 👤 Profil
               </button>
@@ -318,7 +336,7 @@ export default class HomePage {
           </div>
         `;
       }
-      
+
       // Re-bind events for new elements
       this.bindEvents();
     }
@@ -344,7 +362,9 @@ export default class HomePage {
 
   handleTabSwitch(e) {
     const tab = e.target.closest('[data-tab]').dataset.tab;
-    if (tab === this.activeTab) return;
+    if (tab === this.activeTab) {
+      return;
+    }
 
     this.activeTab = tab;
 
@@ -360,7 +380,7 @@ export default class HomePage {
     document.querySelectorAll('.tab-panel').forEach(panel => {
       panel.classList.remove('active');
     });
-    const targetPanel = document.getElementById(tab + 'Panel');
+    const targetPanel = document.getElementById(`${tab}Panel`);
     if (targetPanel) {
       targetPanel.classList.add('active');
     }
@@ -381,11 +401,14 @@ export default class HomePage {
     const resultsSection = document.getElementById('resultsSection');
     const resultContainer = document.getElementById('resultContainer');
 
-    if (!resultsSection || !resultContainer) return;
+    if (!resultsSection || !resultContainer) {
+      return;
+    }
 
-    const isHealthy = result.disease === null || 
-                     (result.disease && result.disease.toLowerCase().includes('healthy'));
-    
+    const isHealthy =
+      result.disease === null ||
+      (result.disease && result.disease.toLowerCase().includes('healthy'));
+
     const diseaseDisplay = result.disease || 'Tidak terdeteksi penyakit';
     const confidence = Math.round(result.confidence || 0);
     const recommendation = result.recommendation || 'Tidak ada rekomendasi khusus';
@@ -451,11 +474,11 @@ export default class HomePage {
 
     // Show results section
     resultsSection.classList.remove('hidden');
-    
+
     // Scroll to results
-    resultsSection.scrollIntoView({ 
+    resultsSection.scrollIntoView({
       behavior: 'smooth',
-      block: 'start'
+      block: 'start',
     });
 
     // Bind result action events
@@ -473,8 +496,10 @@ export default class HomePage {
   }
 
   formatDiseaseName(disease) {
-    if (!disease) return 'Tidak terdeteksi';
-    
+    if (!disease) {
+      return 'Tidak terdeteksi';
+    }
+
     return disease
       .replace(/([A-Z])/g, ' $1')
       .replace(/_/g, ' ')
@@ -483,27 +508,37 @@ export default class HomePage {
   }
 
   getConfidenceClass(confidence) {
-    if (confidence >= 80) return 'high';
-    if (confidence >= 60) return 'medium';
+    if (confidence >= 80) {
+      return 'high';
+    }
+    if (confidence >= 60) {
+      return 'medium';
+    }
     return 'low';
   }
 
   async saveResult() {
     if (!authManager.isAuthenticated()) {
-      window.dispatchEvent(new CustomEvent('showInfo', {
-        detail: 'Silakan login untuk menyimpan hasil prediksi'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showInfo', {
+          detail: 'Silakan login untuk menyimpan hasil prediksi',
+        }),
+      );
       return;
     }
 
     try {
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Hasil prediksi tersimpan otomatis dalam riwayat Anda!'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Hasil prediksi tersimpan otomatis dalam riwayat Anda!',
+        }),
+      );
     } catch (error) {
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'Gagal menyimpan hasil'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: 'Gagal menyimpan hasil',
+        }),
+      );
     }
   }
 
@@ -511,14 +546,16 @@ export default class HomePage {
     if (navigator.share && this.lastPredictionResult) {
       const result = this.lastPredictionResult;
       const diseaseDisplay = this.formatDiseaseName(result.disease || 'Sehat');
-      
-      navigator.share({
-        title: 'Hasil Deteksi Penyakit Tanaman',
-        text: `Hasil analisis: ${diseaseDisplay} dengan confidence ${Math.round(result.confidence)}%`,
-        url: window.location.href
-      }).catch(() => {
-        this.fallbackShare();
-      });
+
+      navigator
+        .share({
+          title: 'Hasil Deteksi Penyakit Tanaman',
+          text: `Hasil analisis: ${diseaseDisplay} dengan confidence ${Math.round(result.confidence)}%`,
+          url: window.location.href,
+        })
+        .catch(() => {
+          this.fallbackShare();
+        });
     } else {
       this.fallbackShare();
     }
@@ -526,21 +563,27 @@ export default class HomePage {
 
   fallbackShare() {
     const result = this.lastPredictionResult;
-    if (!result) return;
+    if (!result) {
+      return;
+    }
 
     const diseaseDisplay = this.formatDiseaseName(result.disease || 'Sehat');
     const text = `Hasil deteksi penyakit tanaman: ${diseaseDisplay} (${Math.round(result.confidence)}% confidence)`;
-    
+
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text).then(() => {
-        window.dispatchEvent(new CustomEvent('showSuccess', {
-          detail: 'Hasil berhasil disalin ke clipboard!'
-        }));
+        window.dispatchEvent(
+          new CustomEvent('showSuccess', {
+            detail: 'Hasil berhasil disalin ke clipboard!',
+          }),
+        );
       });
     } else {
-      window.dispatchEvent(new CustomEvent('showInfo', {
-        detail: 'Fitur share tidak tersedia di browser ini'
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showInfo', {
+          detail: 'Fitur share tidak tersedia di browser ini',
+        }),
+      );
     }
   }
 
@@ -550,61 +593,69 @@ export default class HomePage {
     if (resultsSection) {
       resultsSection.classList.add('hidden');
     }
-    
+
     // Reset last result
     this.lastPredictionResult = null;
-    
+
     // Reset components
     window.dispatchEvent(new CustomEvent('resetComponents'));
-    
-    window.dispatchEvent(new CustomEvent('showInfo', {
-      detail: 'Siap untuk analisis baru!'
-    }));
+
+    window.dispatchEvent(
+      new CustomEvent('showInfo', {
+        detail: 'Siap untuk analisis baru!',
+      }),
+    );
   }
 
   async handleLogout() {
     const confirmed = confirm('Apakah Anda yakin ingin keluar?');
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       await authManager.logout();
-      
-      window.dispatchEvent(new CustomEvent('showSuccess', {
-        detail: 'Berhasil logout. Sampai jumpa!'
-      }));
-      
+
+      window.dispatchEvent(
+        new CustomEvent('showSuccess', {
+          detail: 'Berhasil logout. Sampai jumpa!',
+        }),
+      );
+
       // Clear any stored results
       this.lastPredictionResult = null;
-      
+
       // Navigate to login page
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('navigate', { detail: '/login' }));
       }, 1000);
-      
     } catch (error) {
-      window.dispatchEvent(new CustomEvent('showError', {
-        detail: 'Gagal logout, namun sesi telah dibersihkan'
-      }));
-      
-      // Force navigation even if API call failed
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('navigate', { detail: '/login' }));
-      }, 1000);
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: 'Gagal logout. Silakan coba lagi.',
+        }),
+      );
     }
   }
 
   navigateToHistory() {
-    if (!authManager.requireAuth()) return;
+    if (!authManager.requireAuth()) {
+      return;
+    }
     window.dispatchEvent(new CustomEvent('navigate', { detail: '/history' }));
   }
 
   navigateToDashboard() {
-    if (!authManager.requireRole('admin')) return;
+    if (!authManager.requireRole('admin')) {
+      return;
+    }
     window.dispatchEvent(new CustomEvent('navigate', { detail: '/dashboard' }));
   }
 
   navigateToProfile() {
-    if (!authManager.requireAuth()) return;
+    if (!authManager.requireAuth()) {
+      return;
+    }
     window.dispatchEvent(new CustomEvent('navigate', { detail: '/profile' }));
   }
 }

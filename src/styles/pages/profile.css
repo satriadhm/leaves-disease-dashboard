@@ -384,11 +384,11 @@
     text-align: center;
     gap: var(--space-4);
   }
-  
+
   .info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -398,16 +398,16 @@
   .profile-container {
     padding: var(--space-4);
   }
-  
+
   .nav-tabs {
     justify-content: start;
   }
-  
+
   .tab-btn {
     padding: var(--space-2) var(--space-4);
     font-size: 0.8rem;
   }
-  
+
   .profile-card,
   .security-card,
   .stats-overview,
@@ -415,17 +415,17 @@
   .statistics-actions {
     padding: var(--space-6);
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-3);
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .statistics-actions {
     flex-direction: column;
   }

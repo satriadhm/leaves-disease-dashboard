@@ -1,6 +1,7 @@
+// .prettierrc.js - Fixed Prettier Configuration
 module.exports = {
   semi: true,
-  trailingComma: 'all',
+  trailingComma: 'es5',
   singleQuote: true,
   printWidth: 100,
   tabWidth: 2,
@@ -10,26 +11,4 @@ module.exports = {
   arrowParens: 'avoid',
   endOfLine: 'lf',
   quoteProps: 'as-needed',
-  jsxSingleQuote: true,
-  overrides: [
-    {
-      files: '*.json',
-      options: {
-        printWidth: 120,
-      },
-    },
-    {
-      files: '*.css',
-      options: {
-        printWidth: 120,
-      },
-    },
-    {
-      files: '*.md',
-      options: {
-        printWidth: 80,
-        proseWrap: 'always',
-      },
-    },
-  ],
 };

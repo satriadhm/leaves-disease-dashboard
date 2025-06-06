@@ -73,7 +73,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 60px;
-  background: linear-gradient(135deg, #8B4513, #A0522D);
+  background: linear-gradient(135deg, #8b4513, #a0522d);
   border-radius: 0 0 20px 20px;
 }
 
@@ -84,7 +84,7 @@
   transform: translateX(-50%);
   width: 4px;
   height: 80px;
-  background: #228B22;
+  background: #228b22;
   border-radius: 2px;
 }
 
@@ -117,13 +117,23 @@
 }
 
 @keyframes sway {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(2deg); }
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
 }
 
 @keyframes leafSway {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(5deg) scale(1.05); }
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.05);
+  }
 }
 
 /* Detection Section */

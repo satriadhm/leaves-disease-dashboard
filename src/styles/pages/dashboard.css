@@ -556,11 +556,11 @@
   .stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
-  
+
   .chart-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .health-grid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
@@ -570,47 +570,47 @@
   .dashboard-container {
     padding: var(--space-4);
   }
-  
+
   .header-content {
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-4);
   }
-  
+
   .nav-tabs {
     justify-content: start;
   }
-  
+
   .tab-btn {
     padding: var(--space-3) var(--space-4);
     font-size: 0.8rem;
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .health-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-  
+
   .table-responsive {
     font-size: 0.8rem;
   }
-  
+
   .data-table thead th,
   .data-table tbody td {
     padding: var(--space-2);
@@ -621,16 +621,16 @@
   .chart-card {
     padding: var(--space-4);
   }
-  
+
   .chart-container {
     height: 200px;
   }
-  
+
   .simple-chart {
     height: 150px;
     gap: var(--space-1);
   }
-  
+
   .chart-bar {
     max-width: 40px;
   }

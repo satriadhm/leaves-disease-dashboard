@@ -12,11 +12,11 @@ export default class Router {
 
   addRoute(path, component, options = {}) {
     this.routes[path] = {
-      component: component,
+      component,
       requiresAuth: options.requiresAuth || false,
       requiresRole: options.requiresRole || null,
       title: options.title || 'Plant Disease Detection',
-      description: options.description || ''
+      description: options.description || '',
     };
   }
 
@@ -40,7 +40,7 @@ export default class Router {
     try {
       // Normalize path
       path = this.normalizePath(path);
-      
+
       // Check if route exists
       const route = this.routes[path];
       if (!route && !this.notFoundHandler) {
@@ -74,7 +74,6 @@ export default class Router {
       }
 
       this.currentRoute = path;
-
     } catch (error) {
       console.error('Navigation error:', error);
       if (this.errorHandler) {
@@ -117,7 +116,6 @@ export default class Router {
 
       // Render component
       await this.renderComponent(route.component, path);
-
     } catch (error) {
       throw error;
     } finally {
@@ -152,7 +150,6 @@ export default class Router {
 
       // Scroll to top
       window.scrollTo(0, 0);
-
     } catch (error) {
       console.error('Component render error:', error);
       throw error;
@@ -164,10 +161,10 @@ export default class Router {
     if (path !== '/' && path.endsWith('/')) {
       path = path.slice(0, -1);
     }
-    
+
     // Ensure path starts with /
     if (!path.startsWith('/')) {
-      path = '/' + path;
+      path = `/${path}`;
     }
 
     return path;
@@ -224,25 +221,27 @@ export default class Router {
   }
 
   checkRole(requiredRole) {
-    if (!this.checkAuth()) return false;
+    if (!this.checkAuth()) {
+      return false;
+    }
 
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const userRoles = user.roles || [];
-      
+
       // Check if user has the required role
-      return userRoles.some(role => 
-        role.includes(requiredRole.toUpperCase())
-      );
+      return userRoles.some(role => role.includes(requiredRole.toUpperCase()));
     } catch {
       return false;
     }
   }
 
   showLoading() {
-    window.dispatchEvent(new CustomEvent('showLoading', {
-      detail: { message: 'Memuat halaman...' }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('showLoading', {
+        detail: { message: 'Memuat halaman...' },
+      })
+    );
   }
 
   hideLoading() {
@@ -250,9 +249,11 @@ export default class Router {
   }
 
   showError(message) {
-    window.dispatchEvent(new CustomEvent('showError', {
-      detail: message
-    }));
+    window.dispatchEvent(
+      new CustomEvent('showError', {
+        detail: message,
+      })
+    );
   }
 
   show404() {
@@ -303,13 +304,13 @@ export default class Router {
 
   start() {
     // Listen for browser navigation
-    window.addEventListener('popstate', (e) => {
+    window.addEventListener('popstate', e => {
       const path = e.state?.path || window.location.pathname;
       this.loadRoute(path, this.routes[path]);
     });
 
     // Listen for custom navigation events
-    window.addEventListener('navigate', (e) => {
+    window.addEventListener('navigate', e => {
       this.navigate(e.detail);
     });
 
@@ -349,9 +350,11 @@ export default class Router {
       // Call original guard first
       if (originalBeforeRouteChange) {
         const result = await originalBeforeRouteChange(to, from);
-        if (result === false) return false;
+        if (result === false) {
+          return false;
+        }
       }
-      
+
       // Call new guard
       return await guardFn(to, from);
     };

@@ -19,6 +19,6 @@
 
 /* Pages */
 @import './pages/home.css';
-@import './pages/history.css'; 
-@import './pages/profile.css'; 
+@import './pages/history.css';
+@import './pages/profile.css';
 @import './pages/dashboard.css';

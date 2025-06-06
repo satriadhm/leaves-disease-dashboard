@@ -9,9 +9,9 @@ class AuthManager {
   init() {
     // Check if user is logged in on page load
     this.checkAuthStatus();
-    
+
     // Listen for storage changes (multi-tab support)
-    window.addEventListener('storage', (e) => {
+    window.addEventListener('storage', e => {
       if (e.key === 'authToken' || e.key === 'user') {
         this.checkAuthStatus();
       }
@@ -21,7 +21,7 @@ class AuthManager {
   checkAuthStatus() {
     const token = localStorage.getItem('authToken');
     const user = localStorage.getItem('user');
-    
+
     if (token && user) {
       apiService.updateToken(token);
       this.setAuthState(true, JSON.parse(user));
@@ -32,9 +32,11 @@ class AuthManager {
 
   setAuthState(isAuthenticated, user) {
     // Dispatch custom event for components to listen
-    window.dispatchEvent(new CustomEvent('authStateChanged', {
-      detail: { isAuthenticated, user }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('authStateChanged', {
+        detail: { isAuthenticated, user },
+      })
+    );
   }
 
   async login(credentials) {
@@ -44,7 +46,7 @@ class AuthManager {
         id: response.id,
         username: response.username,
         email: response.email,
-        roles: response.roles
+        roles: response.roles,
       });
       return response;
     } catch (error) {
@@ -96,12 +98,16 @@ class AuthManager {
   }
 
   requireRole(role) {
-    if (!this.requireAuth()) return false;
-    
+    if (!this.requireAuth()) {
+      return false;
+    }
+
     if (!this.hasRole(role)) {
-      window.dispatchEvent(new CustomEvent('showError', { 
-        detail: 'You do not have permission to access this page' 
-      }));
+      window.dispatchEvent(
+        new CustomEvent('showError', {
+          detail: 'You do not have permission to access this page',
+        })
+      );
       return false;
     }
     return true;

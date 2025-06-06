@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // src/components/CameraCapture.js
 import apiService from '../services/api.js';
 
@@ -14,8 +15,8 @@ export default class CameraCapture {
       video: {
         width: { ideal: 1280, max: 1920 },
         height: { ideal: 720, max: 1080 },
-        facingMode: this.facingMode
-      }
+        facingMode: this.facingMode,
+      },
     };
   }
 
@@ -104,13 +105,16 @@ export default class CameraCapture {
           
           <div class="preview-actions">
             <button class="btn btn-success" id="analyzeCapturedBtn" ${this.isAnalyzing ? 'disabled' : ''}>
-              ${this.isAnalyzing ? `
+              ${this.isAnalyzing
+    ? `
                 <span class="btn-spinner"></span>
                 <span class="btn-text">Menganalisis...</span>
-              ` : `
+              `
+    : `
                 <span class="btn-icon">🔬</span>
                 <span class="btn-text">Analisis Foto</span>
-              `}
+              `
+}
             </button>
             <button class="btn btn-secondary" id="retakeBtn">
               <span class="btn-icon">🔄</span>
@@ -179,10 +183,10 @@ export default class CameraCapture {
     discardBtn?.addEventListener('click', () => this.discardCapturedImage());
 
     // Notes character counter
-    captureNotes?.addEventListener('input', (e) => this.updateCharCounter(e));
+    captureNotes?.addEventListener('input', e => this.updateCharCounter(e));
 
     // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => this.handleKeydown(e));
+    document.addEventListener('keydown', e => this.handleKeydown(e));
   }
 
   bindResetListener() {
@@ -197,9 +201,11 @@ export default class CameraCapture {
 
   handleKeydown(e) {
     // Only handle shortcuts when camera is active
-    if (!this.isCapturing) return;
+    if (!this.isCapturing) {
+      return;
+    }
 
-    switch(e.code) {
+    switch (e.code) {
       case 'Space':
         e.preventDefault();
         this.capturePhoto();
@@ -222,7 +228,7 @@ export default class CameraCapture {
 
       // Request camera permission
       this.stream = await navigator.mediaDevices.getUserMedia(this.constraints);
-      
+
       if (!this.video) {
         throw new Error('Video element tidak ditemukan');
       }
@@ -242,14 +248,16 @@ export default class CameraCapture {
       await this.video.play();
 
       this.isCapturing = true;
-      this.updateStatus('success', 'Kamera aktif. Tekan spasi atau klik tombol untuk mengambil foto.');
+      this.updateStatus(
+        'success',
+        'Kamera aktif. Tekan spasi atau klik tombol untuk mengambil foto.',
+      );
       this.toggleButtons(true);
-
     } catch (error) {
       console.error('Error accessing camera:', error);
-      
+
       let errorMessage = 'Gagal mengakses kamera. ';
-      
+
       if (error.name === 'NotAllowedError') {
         errorMessage += 'Izin kamera ditolak. Silakan izinkan akses kamera di pengaturan browser.';
       } else if (error.name === 'NotFoundError') {
@@ -261,23 +269,25 @@ export default class CameraCapture {
       } else {
         errorMessage += error.message || 'Terjadi kesalahan yang tidak dikenal.';
       }
-      
+
       this.updateStatus('error', errorMessage);
     }
   }
 
   capturePhoto() {
-    if (!this.video || !this.canvas || !this.isCapturing) return;
+    if (!this.video || !this.canvas || !this.isCapturing) {
+      return;
+    }
 
     try {
       const context = this.canvas.getContext('2d');
-      
+
       // Draw video frame to canvas
       context.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
 
       // Convert to blob
       this.canvas.toBlob(
-        (blob) => {
+        blob => {
           if (blob) {
             this.capturedImageBlob = blob;
             const imageUrl = URL.createObjectURL(blob);
@@ -288,9 +298,8 @@ export default class CameraCapture {
           }
         },
         'image/jpeg',
-        0.9
+        0.9,
       );
-
     } catch (error) {
       console.error('Error capturing photo:', error);
       this.updateStatus('error', 'Gagal mengambil foto. Silakan coba lagi.');
@@ -318,7 +327,7 @@ export default class CameraCapture {
 
     // Clear captured data
     this.capturedImageBlob = null;
-    
+
     // Reset UI
     cameraPreview.style.display = 'block';
     capturedPreview.classList.add('hidden');
@@ -336,7 +345,9 @@ export default class CameraCapture {
   }
 
   async downloadCapturedImage() {
-    if (!this.capturedImageBlob) return;
+    if (!this.capturedImageBlob) {
+      return;
+    }
 
     try {
       const url = URL.createObjectURL(this.capturedImageBlob);
@@ -355,7 +366,9 @@ export default class CameraCapture {
   }
 
   async flipCamera() {
-    if (!this.isCapturing) return;
+    if (!this.isCapturing) {
+      return;
+    }
 
     try {
       // Toggle facing mode
@@ -369,11 +382,10 @@ export default class CameraCapture {
 
       // Start with new constraints
       await this.startCamera();
-      
     } catch (error) {
       console.error('Error flipping camera:', error);
       this.updateStatus('warning', 'Gagal mengganti kamera. Menggunakan kamera default.');
-      
+
       // Fallback to default constraints
       this.facingMode = 'environment';
       this.constraints.video.facingMode = this.facingMode;
@@ -396,7 +408,7 @@ export default class CameraCapture {
     // Reset UI
     const cameraPreview = document.getElementById('cameraPreview');
     const capturedPreview = document.getElementById('capturedPreview');
-    
+
     cameraPreview.style.display = 'block';
     capturedPreview.classList.add('hidden');
 
@@ -431,7 +443,7 @@ export default class CameraCapture {
     const counter = document.getElementById('captureNotesCounter');
     const length = e.target.value.length;
     counter.textContent = length;
-    
+
     // Update counter color based on length
     counter.className = '';
     if (length > 450) {
@@ -442,15 +454,17 @@ export default class CameraCapture {
   }
 
   async analyzeCapturedImage() {
-    if (!this.capturedImageBlob || this.isAnalyzing) return;
+    if (!this.capturedImageBlob || this.isAnalyzing) {
+      return;
+    }
 
     try {
       this.setAnalyzingState(true);
-      
+
       // Create FormData
       const formData = new FormData();
       formData.append('image', this.capturedImageBlob, 'camera-capture.jpg');
-      
+
       // Add notes if provided
       const notes = document.getElementById('captureNotes')?.value.trim();
       if (notes) {
@@ -470,29 +484,29 @@ export default class CameraCapture {
         recommendation: this.getRecommendation(response.data.predictedClass),
         allPredictions: response.data.allPredictions,
         processingTime: response.data.processingTime,
-        notes: notes
+        notes,
       };
 
       // Dispatch result event
-      window.dispatchEvent(new CustomEvent('detectionResult', {
-        detail: result
-      }));
+      window.dispatchEvent(
+        new CustomEvent('detectionResult', {
+          detail: result,
+        }),
+      );
 
       this.updateStatus('success', 'Analisis selesai! Lihat hasil di bawah.');
-
     } catch (error) {
       console.error('Analysis error:', error);
-      
+
       let errorMessage = 'Gagal menganalisis foto. ';
-      
+
       if (error.message.includes('network') || error.message.includes('fetch')) {
         errorMessage += 'Periksa koneksi internet Anda.';
       } else {
         errorMessage += 'Silakan coba lagi.';
       }
-      
+
       this.updateStatus('error', errorMessage);
-      
     } finally {
       this.setAnalyzingState(false);
     }
@@ -501,38 +515,48 @@ export default class CameraCapture {
   getRecommendation(predictedClass) {
     const recommendations = {
       // Healthy
-      'healthy': 'Tanaman dalam kondisi sehat. Lanjutkan perawatan rutin.',
-      
+      healthy: 'Tanaman dalam kondisi sehat. Lanjutkan perawatan rutin.',
+
       // Chili diseases
-      'chili__leaf_curl': 'Tingkatkan drainase tanah dan kurangi kelembaban. Gunakan mulsa untuk menjaga kelembaban tanah tetap stabil.',
-      'chili__leaf_spot': 'Buang daun yang terinfeksi dan tingkatkan sirkulasi udara. Aplikasikan fungisida jika diperlukan.',
-      'chili__whitefly': 'Gunakan perangkap kuning lengket dan aplikasikan insektisida ramah lingkungan.',
-      
-      // Corn diseases  
-      'corn__common_rust': 'Aplikasikan fungisida preventif dan pastikan rotasi tanaman yang baik.',
-      'corn__gray_leaf_spot': 'Tingkatkan jarak tanam untuk sirkulasi udara yang lebih baik dan gunakan varietas tahan.',
-      'corn__northern_leaf_blight': 'Buang sisa tanaman yang terinfeksi dan aplikasikan fungisida sesuai kebutuhan.',
-      
+      chili__leaf_curl:
+        'Tingkatkan drainase tanah dan kurangi kelembaban. Gunakan mulsa untuk menjaga kelembaban tanah tetap stabil.',
+      chili__leaf_spot:
+        'Buang daun yang terinfeksi dan tingkatkan sirkulasi udara. Aplikasikan fungisida jika diperlukan.',
+      chili__whitefly:
+        'Gunakan perangkap kuning lengket dan aplikasikan insektisida ramah lingkungan.',
+
+      // Corn diseases
+      corn__common_rust: 'Aplikasikan fungisida preventif dan pastikan rotasi tanaman yang baik.',
+      corn__gray_leaf_spot:
+        'Tingkatkan jarak tanam untuk sirkulasi udara yang lebih baik dan gunakan varietas tahan.',
+      corn__northern_leaf_blight:
+        'Buang sisa tanaman yang terinfeksi dan aplikasikan fungisida sesuai kebutuhan.',
+
       // Rice diseases
-      'rice__brown_spot': 'Perbaiki manajemen air dan nutrisi tanaman. Aplikasikan fungisida jika diperlukan.',
-      'rice__leaf_blast': 'Kurangi nitrogen berlebih dan tingkatkan drainase sawah.',
-      'rice__neck_blast': 'Gunakan varietas tahan dan aplikasikan fungisida pada tahap pembungaan.',
-      
+      rice__brown_spot:
+        'Perbaiki manajemen air dan nutrisi tanaman. Aplikasikan fungisida jika diperlukan.',
+      rice__leaf_blast: 'Kurangi nitrogen berlebih dan tingkatkan drainase sawah.',
+      rice__neck_blast: 'Gunakan varietas tahan dan aplikasikan fungisida pada tahap pembungaan.',
+
       // Tomato diseases
-      'tomato__early_blight': 'Tingkatkan sirkulasi udara dan hindari penyiraman pada daun. Gunakan mulsa.',
-      'tomato__late_blight': 'Aplikasikan fungisida preventif dan pastikan drainase yang baik.',
-      'tomato__yellow_leaf_curl_virus': 'Kontrol kutu kebul sebagai vektor virus dan gunakan varietas tahan.'
+      tomato__early_blight:
+        'Tingkatkan sirkulasi udara dan hindari penyiraman pada daun. Gunakan mulsa.',
+      tomato__late_blight: 'Aplikasikan fungisida preventif dan pastikan drainase yang baik.',
+      tomato__yellow_leaf_curl_virus:
+        'Kontrol kutu kebul sebagai vektor virus dan gunakan varietas tahan.',
     };
 
     const key = predictedClass?.toLowerCase().replace(/[^a-z_]/g, '');
-    return recommendations[key] || 'Konsultasikan dengan ahli pertanian untuk penanganan yang tepat.';
+    return (
+      recommendations[key] || 'Konsultasikan dengan ahli pertanian untuk penanganan yang tepat.'
+    );
   }
 
   setAnalyzingState(analyzing) {
     this.isAnalyzing = analyzing;
     const analyzeBtn = document.getElementById('analyzeCapturedBtn');
     const retakeBtn = document.getElementById('retakeBtn');
-    
+
     if (analyzing) {
       analyzeBtn.disabled = true;
       analyzeBtn.innerHTML = `
@@ -552,13 +576,15 @@ export default class CameraCapture {
 
   updateStatus(type, message) {
     const statusElement = document.getElementById('cameraStatus');
-    if (!statusElement) return;
+    if (!statusElement) {
+      return;
+    }
 
     const iconMap = {
       info: '📷',
       success: '✅',
       warning: '⚠️',
-      error: '❌'
+      error: '❌',
     };
 
     statusElement.innerHTML = `
