@@ -3,9 +3,7 @@
 /* Base Styles */
 @import './base/variables.css';
 @import './base/reset.css';
-
-/* Utilities */
-@import './utilities/utilities.css';
+@import './base/utilities.css'; /* Fixed: was ./utilities/utilities.css */
 
 /* Components */
 @import './components/buttons.css';
@@ -13,9 +11,14 @@
 @import './components/notifications.css';
 @import './components/upload-camera.css';
 @import './components/states.css';
+@import './components/tabs.css'; /* Added: New tabs component */
 
 /* Layouts */
 @import './layouts/layout.css';
 @import './layouts/auth.css';
 
+/* Pages */
 @import './pages/home.css';
+@import './pages/history.css'; 
+@import './pages/profile.css'; 
+@import './pages/dashboard.css';
