@@ -1,5 +1,9 @@
 # 🌱 Plant Disease Detection Dashboard
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsatriadhm%2Fleaves-disease-dashboard)
+[![CI/CD](https://github.com/satriadhm/leaves-disease-dashboard/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/satriadhm/leaves-disease-dashboard/actions/workflows/ci-cd.yml)
+[![codecov](https://codecov.io/gh/satriadhm/leaves-disease-dashboard/branch/main/graph/badge.svg)](https://codecov.io/gh/satriadhm/leaves-disease-dashboard)
+
 Aplikasi web modern untuk deteksi penyakit tanaman menggunakan AI dengan antarmuka yang responsif dan intuitif. Dashboard ini terintegrasi dengan API Plant Disease Detection untuk memberikan analisis yang akurat pada tanaman cabai, jagung, padi, dan tomat.
 
 ![Plant Disease Detection](https://img.shields.io/badge/Plant%20Disease-Detection-green)
@@ -28,7 +32,7 @@ Aplikasi web modern untuk deteksi penyakit tanaman menggunakan AI dengan antarmu
 
 ### 🎨 Modern UI/UX
 - **Responsive Design**: Optimal di desktop, tablet, dan mobile
-- **Dark/Light Mode**: Tema yang dapat disesuaikan
+- **Modular CSS**: Struktur CSS yang terorganisir dan mudah maintain
 - **Accessibility**: Mendukung keyboard navigation dan screen readers
 - **Progressive Web App**: Installable dan offline-capable
 
@@ -85,7 +89,7 @@ npm run dev
 
 ```bash
 # Build for production
-npm run build
+npm run build:prod
 
 # Preview production build
 npm run preview
@@ -111,14 +115,57 @@ leaves-disease-dashboard/
 │   ├── utils/              # Utilities
 │   │   ├── auth.js         # Authentication manager
 │   │   └── router.js       # Client-side router
-│   ├── styles/             # Stylesheets
-│   │   └── main.css        # Main CSS file
+│   ├── styles/             # Modular CSS
+│   │   ├── base/           # Base styles & variables
+│   │   ├── components/     # Component styles
+│   │   ├── layouts/        # Layout styles
+│   │   ├── pages/          # Page-specific styles
+│   │   ├── utilities/      # Utility classes
+│   │   └── main.css        # Main CSS entry point
 │   └── main.js             # Application entry point
-├── dist/                   # Built files
-├── webpack.config.js       # Webpack configuration
+├── public/                 # Static assets
+│   ├── manifest.json       # PWA manifest
+│   ├── sw.js              # Service worker
+│   └── icons/             # PWA icons
+├── .github/workflows/      # GitHub Actions
+├── dist/                  # Built files
+├── webpack.config.js      # Webpack configuration
+├── vercel.json           # Vercel deployment config
 ├── package.json
 └── README.md
 ```
+
+## 🎨 CSS Architecture
+
+Struktur CSS yang modular dan mudah maintain:
+
+```
+src/styles/
+├── base/
+│   ├── variables.css      # CSS custom properties
+│   └── reset.css          # CSS reset & base styles
+├── components/
+│   ├── buttons.css        # Button components
+│   ├── forms.css          # Form components
+│   ├── notifications.css  # Notification & loading
+│   ├── upload-camera.css  # Upload & camera specific
+│   └── states.css         # Empty & error states
+├── layouts/
+│   ├── layout.css         # General layout
+│   └── auth.css           # Authentication layout
+├── pages/
+│   └── home.css           # Home page specific
+├── utilities/
+│   └── utilities.css      # Utility classes
+└── main.css               # Main entry point
+```
+
+### Manfaat Modular CSS:
+- **Maintainability**: Mudah mencari dan mengubah style specific
+- **Reusability**: Component styles dapat digunakan kembali
+- **Performance**: CSS yang tidak terpakai dapat dihapus
+- **Organization**: Struktur yang jelas dan terorganisir
+- **Scalability**: Mudah menambah style baru tanpa konflik
 
 ## 🔧 Architecture
 
@@ -167,96 +214,135 @@ router.addRoute('/admin', AdminDashboard, {
 });
 ```
 
-## 🎯 API Integration
+## 🚀 Deployment
 
-Dashboard ini berintegrasi dengan [Plant Disease API](https://github.com/satriadhm/plant-disease-prediction-api):
+### Deploy ke Vercel (Recommended)
 
-### 🔗 Endpoints yang Digunakan
+#### Option 1: One-Click Deploy
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsatriadhm%2Fleaves-disease-dashboard)
 
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| `POST` | `/api/auth/signin` | Login pengguna |
-| `POST` | `/api/auth/signup` | Registrasi pengguna |
-| `POST` | `/api/predict` | Prediksi penyakit tanaman |
-| `GET` | `/api/predictions/history` | Riwayat prediksi |
-| `GET` | `/api/user/profile` | Data profil pengguna |
-| `GET` | `/api/admin/users` | Data pengguna (admin) |
+#### Option 2: Manual Deploy
 
-### 🔐 Authentication Flow
+```bash
+# Install Vercel CLI
+npm i -g vercel
 
-```javascript
-// Login process
-const credentials = { username, password };
-const response = await apiService.login(credentials);
+# Login ke Vercel
+vercel login
 
-// Auto-stored in localStorage
-localStorage.setItem('authToken', response.accessToken);
-localStorage.setItem('user', JSON.stringify(response.user));
+# Deploy
+vercel --prod
 ```
 
-## 📱 Features Detail
+#### Option 3: GitHub Integration
 
-### 🖼️ Image Upload & Camera
-- **Drag & Drop**: Intuitive file upload
-- **Real-time Preview**: Preview sebelum analisis
-- **Image Validation**: Format dan ukuran file
-- **Camera Integration**: Akses kamera device
-- **Multiple Sources**: File system atau camera capture
+1. Connect repository ke Vercel
+2. Set environment variables di Vercel dashboard
+3. Auto-deploy on push to main branch
 
-### 🔍 AI Analysis
-- **Real-time Processing**: Analisis menggunakan TensorFlow.js
-- **Confidence Metrics**: Tingkat kepercayaan prediksi
-- **Multiple Predictions**: Top 5 kemungkinan hasil
-- **Disease Information**: Detail penyakit dan treatment
+### Environment Variables untuk Vercel
 
-### 📊 Data Visualization
-- **Charts & Graphs**: Visualisasi data prediksi
-- **Statistics Dashboard**: Analisis penggunaan
-- **Export Functions**: Download data dalam berbagai format
-- **Real-time Updates**: Data yang selalu up-to-date
+```bash
+# Required
+API_URL=https://leaves-disease-api.vercel.app
+NODE_ENV=production
 
-### 👨‍💼 Admin Features
-- **User Management**: CRUD operasi pengguna
-- **System Monitoring**: Health checks dan performance
-- **Data Analytics**: Insight dari data penggunaan
-- **Bulk Operations**: Operasi massal pada data
-
-## 🎨 Theming & Customization
-
-### CSS Custom Properties
-```css
-:root {
-  --primary-500: #3b82f6;
-  --success-500: #10b981;
-  --error-500: #ef4444;
-  --gray-50: #f9fafb;
-  /* ... more variables */
-}
+# Optional
+GOOGLE_ANALYTICS_ID=your_ga_id
+SENTRY_DSN=your_sentry_dsn
 ```
 
-### Component Styling
-Setiap komponen memiliki styling modular yang dapat disesuaikan:
+### Custom Domain
 
-```css
-.upload-container {
-  /* Component-specific styles */
-}
-
-.upload-container.dark-theme {
-  /* Dark theme overrides */
-}
+```bash
+# Add custom domain
+vercel domains add yourdomain.com
 ```
+
+## 🔧 Development Tools
+
+### Code Quality
+- **ESLint**: JavaScript linting dengan aturan modern
+- **Prettier**: Code formatting yang konsisten
+- **Husky**: Git hooks untuk quality checks
+- **Lint-staged**: Pre-commit checks
+
+### Build & Bundle
+- **Webpack 5**: Modern module bundling
+- **Babel**: JavaScript transpilation
+- **PostCSS**: CSS processing dengan autoprefixer
+- **Terser**: JavaScript minification
+- **CSS Minimizer**: CSS optimization
+
+### Testing
+- **Jest**: Unit testing framework
+- **Coverage**: Code coverage reporting
+- **Lighthouse CI**: Performance & accessibility testing
+
+### Development Workflow
+
+```bash
+# Linting
+npm run lint
+npm run lint:fix
+
+# Formatting
+npm run format
+npm run format:check
+
+# Testing
+npm run test
+npm run test:watch
+npm run test:coverage
+
+# Build analysis
+npm run build:analyze
+```
+
+## 📊 Performance
+
+### Optimizations
+- **Code Splitting**: Automatic code splitting dengan Webpack
+- **Asset Optimization**: Image compression dan lazy loading
+- **CSS Purging**: Remove unused CSS di production
+- **Caching Strategy**: Browser caching untuk static assets
+- **Bundle Analysis**: Bundle size monitoring
+
+### PWA Features
+- **Service Worker**: Offline functionality
+- **App Manifest**: Installable app
+- **Responsive Design**: Mobile-first approach
+- **Fast Loading**: Optimized untuk mobile networks
+
+## 🔒 Security
+
+### Security Headers
+- Content Security Policy (CSP)
+- X-Frame-Options
+- X-Content-Type-Options
+- Referrer Policy
+
+### Input Validation
+- File type validation
+- File size limits
+- XSS protection
+- CSRF protection
+
+### Authentication
+- JWT tokens
+- Role-based access control
+- Session management
 
 ## 🧪 Testing
 
 ```bash
-# Run tests
+# Run all tests
 npm test
 
-# Run tests in watch mode
+# Watch mode
 npm run test:watch
 
-# Generate coverage report
+# Coverage report
 npm run test:coverage
 ```
 
@@ -269,41 +355,7 @@ tests/
 └── integration/    # Integration tests
 ```
 
-## 📈 Performance Optimization
-
-### Code Splitting
-```javascript
-// Lazy loading components
-const AdminDashboard = () => import('./components/AdminDashboard.js');
-```
-
-### Asset Optimization
-- **Image Compression**: Otomatis compress gambar
-- **CSS Purging**: Remove unused CSS
-- **JS Minification**: Minify JavaScript production
-- **Caching Strategy**: Browser caching untuk assets
-
-### Bundle Analysis
-```bash
-# Analyze bundle size
-npm run analyze
-```
-
-## 🔒 Security Features
-
-### Input Validation
-- **File Type Validation**: Hanya accept image files
-- **File Size Limits**: Maksimal 5MB per file
-- **XSS Protection**: Sanitize user inputs
-- **CSRF Protection**: Token-based protection
-
-### Authentication Security
-- **JWT Tokens**: Secure token-based auth
-- **Token Expiration**: Auto-expire sessions
-- **Role-based Access**: Granular permissions
-- **Password Strength**: Enforce strong passwords
-
-## 🌐 Browser Support
+## 📱 Browser Support
 
 | Browser | Version |
 |---------|---------|
@@ -311,83 +363,6 @@ npm run analyze
 | Firefox | 88+ |
 | Safari | 14+ |
 | Edge | 90+ |
-
-### Feature Support
-- **ES6+ Features**: Modern JavaScript
-- **CSS Grid & Flexbox**: Modern layouts
-- **WebRTC**: Camera access
-- **File API**: File handling
-- **Fetch API**: HTTP requests
-
-## 📱 Mobile Optimization
-
-### Responsive Design
-- **Mobile-first**: Optimized untuk mobile
-- **Touch Gestures**: Support touch interactions
-- **Viewport Optimization**: Optimal di semua ukuran screen
-- **Performance**: Fast loading pada mobile networks
-
-### PWA Features
-- **Service Worker**: Offline functionality
-- **App Manifest**: Installable app
-- **Push Notifications**: Real-time updates
-- **Background Sync**: Sync data ketika online
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
-```
-
-### Netlify
-
-```bash
-# Build command
-npm run build
-
-# Publish directory
-dist
-```
-
-### Docker
-
-```dockerfile
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-## 🛠️ Development Tools
-
-### Code Quality
-- **ESLint**: JavaScript linting
-- **Prettier**: Code formatting
-- **Husky**: Git hooks
-- **Lint-staged**: Pre-commit checks
-
-### Development Workflow
-```bash
-# Linting
-npm run lint
-npm run lint:fix
-
-# Formatting
-npm run format
-
-# Type checking (if using TypeScript)
-npm run type-check
-```
 
 ## 🤝 Contributing
 
@@ -403,22 +378,47 @@ npm run type-check
 - Write meaningful commit messages
 - Add tests for new features
 - Update documentation
+- Follow CSS BEM methodology untuk naming
+
+### Commit Convention
+```bash
+# Format: type(scope): description
+feat(upload): add drag and drop functionality
+fix(auth): resolve login redirect issue
+docs(readme): update deployment instructions
+style(css): reorganize component styles
+```
 
 ## 📝 Changelog
 
 ### Version 2.0.0
-- ✅ Complete UI/UX redesign
-- ✅ Modern component architecture
-- ✅ Enhanced mobile experience
-- ✅ Admin dashboard
-- ✅ Real-time notifications
+- ✅ Modular CSS architecture
+- ✅ Vercel deployment optimization
+- ✅ Enhanced build configuration
+- ✅ CI/CD pipeline dengan GitHub Actions
+- ✅ PWA functionality
 - ✅ Performance optimizations
+- ✅ Security improvements
 
 ### Version 1.0.0
 - ✅ Basic plant disease detection
 - ✅ User authentication
 - ✅ File upload functionality
 - ✅ Prediction history
+
+## 🔮 Roadmap
+
+### Q1 2024
+- [ ] **Advanced PWA**: Enhanced offline functionality
+- [ ] **Multi-language**: Internationalization support
+- [ ] **Advanced Analytics**: Detailed insights dashboard
+- [ ] **Mobile App**: React Native version
+
+### Q2 2024
+- [ ] **API v3**: Enhanced prediction accuracy
+- [ ] **Real-time Collaboration**: Share results
+- [ ] **Integration APIs**: Third-party integrations
+- [ ] **Premium Features**: Advanced analysis tools
 
 ## 📞 Support
 
@@ -435,23 +435,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **TensorFlow.js**: AI model inference
 - **Webpack**: Module bundling
+- **Vercel**: Deployment platform
 - **Inter Font**: Typography
-- **Heroicons**: Icon system
 - **Plant Disease API**: Backend services
-
-## 🔮 Roadmap
-
-### Q1 2024
-- [ ] **Offline Mode**: PWA offline functionality
-- [ ] **Multi-language**: Internationalization support
-- [ ] **Advanced Analytics**: More detailed insights
-- [ ] **Mobile App**: React Native version
-
-### Q2 2024
-- [ ] **API v3**: Enhanced prediction accuracy
-- [ ] **Real-time Collaboration**: Share results
-- [ ] **Integration APIs**: Third-party integrations
-- [ ] **Premium Features**: Advanced analysis tools
 
 ---
 

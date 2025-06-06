@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -10,8 +11,9 @@ module.exports = {
   
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: isProduction ? "[name].[contenthash].js" : "[name].js",
-    chunkFilename: isProduction ? "[name].[contenthash].js" : "[name].js",
+    filename: isProduction ? "js/[name].[contenthash:8].js" : "js/[name].js",
+    chunkFilename: isProduction ? "js/[name].[contenthash:8].chunk.js" : "js/[name].chunk.js",
+    assetModuleFilename: isProduction ? "assets/[name].[contenthash:8][ext]" : "assets/[name][ext]",
     clean: true,
     publicPath: "/",
   },
@@ -59,22 +61,39 @@ module.exports = {
             options: {
               importLoaders: 1,
               sourceMap: !isProduction,
+              modules: false,
+            },
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  ["autoprefixer"],
+                  ...(isProduction ? [["cssnano", { preset: "default" }]] : []),
+                ],
+              },
             },
           },
         ],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|webp|ico)$/i,
         type: "asset/resource",
         generator: {
-          filename: "images/[name].[hash][ext]",
+          filename: "images/[name].[contenthash:8][ext]",
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8 * 1024, // 8kb
+          },
         },
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: "asset/resource",
         generator: {
-          filename: "fonts/[name].[hash][ext]",
+          filename: "fonts/[name].[contenthash:8][ext]",
         },
       },
     ],
@@ -99,13 +118,20 @@ module.exports = {
             minifyURLs: true,
           }
         : false,
+      templateParameters: {
+        env: {
+          API_URL: process.env.API_URL || "https://leaves-disease-api.vercel.app",
+          NODE_ENV: process.env.NODE_ENV || "development",
+          VERSION: process.env.npm_package_version || "2.0.0",
+        },
+      },
     }),
     
     ...(isProduction
       ? [
           new MiniCssExtractPlugin({
-            filename: "[name].[contenthash].css",
-            chunkFilename: "[name].[contenthash].css",
+            filename: "css/[name].[contenthash:8].css",
+            chunkFilename: "css/[name].[contenthash:8].chunk.css",
           }),
         ]
       : []),
@@ -119,12 +145,23 @@ module.exports = {
           compress: {
             drop_console: isProduction,
             drop_debugger: isProduction,
+            pure_funcs: isProduction ? ["console.log"] : [],
           },
           format: {
             comments: false,
           },
         },
         extractComments: false,
+      }),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: [
+            "default",
+            {
+              discardComments: { removeAll: true },
+            },
+          ],
+        },
       }),
     ],
     
@@ -136,6 +173,7 @@ module.exports = {
           name: "vendors",
           chunks: "all",
           priority: 10,
+          reuseExistingChunk: true,
         },
         common: {
           name: "common",
@@ -143,6 +181,13 @@ module.exports = {
           chunks: "all",
           priority: 5,
           reuseExistingChunk: true,
+          enforce: true,
+        },
+        styles: {
+          name: "styles",
+          type: "css/mini-extract",
+          chunks: "all",
+          enforce: true,
         },
       },
     },
@@ -150,6 +195,9 @@ module.exports = {
     runtimeChunk: {
       name: "runtime",
     },
+    
+    usedExports: true,
+    sideEffects: false,
   },
   
   devServer: {
@@ -174,12 +222,20 @@ module.exports = {
     devMiddleware: {
       stats: "minimal",
     },
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization",
+    },
   },
   
   stats: {
     preset: "minimal",
     moduleTrace: true,
     errorDetails: true,
+    colors: true,
+    chunks: false,
+    modules: false,
   },
   
   performance: {
@@ -191,4 +247,11 @@ module.exports = {
   devtool: isProduction ? "source-map" : "eval-cheap-module-source-map",
   
   mode: isProduction ? "production" : "development",
+  
+  cache: {
+    type: "filesystem",
+    buildDependencies: {
+      config: [__filename],
+    },
+  },
 };

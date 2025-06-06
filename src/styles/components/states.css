@@ -1,0 +1,250 @@
+/* src/styles/components/states.css - Empty & Error States */
+
+/* Empty States */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: var(--space-2);
+}
+
+.empty-state p {
+  color: var(--gray-600);
+  margin-bottom: var(--space-6);
+}
+
+/* Error Pages */
+.error-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: var(--gray-50);
+}
+
+.error-content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.error-icon {
+  font-size: 5rem;
+  margin-bottom: var(--space-6);
+}
+
+.error-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: var(--space-4);
+}
+
+.error-content p {
+  color: var(--gray-600);
+  font-size: 1.125rem;
+  margin-bottom: var(--space-8);
+}
+
+.error-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* No Data State */
+.no-data {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--gray-500);
+  font-style: italic;
+}
+
+/* Loading Cell */
+.loading-cell {
+  text-align: center;
+  padding: var(--space-8);
+}
+
+.loading-cell .loading-spinner {
+  margin: 0 auto var(--space-4);
+}
+
+/* Confidence Badges */
+.confidence-badge {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+}
+
+.confidence-badge.high {
+  background: var(--success-500);
+}
+
+.confidence-badge.medium {
+  background: var(--warning-500);
+}
+
+.confidence-badge.low {
+  background: var(--error-500);
+}
+
+/* Status Badges */
+.status-badge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+
+.status-badge.inactive {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+/* Role Badges */
+.role-badge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.role-badge.admin {
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+.role-badge.moderator {
+  background: var(--warning-100);
+  color: var(--warning-700);
+}
+
+.role-badge.user {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+/* Type Badges */
+.type-badge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.type-badge.authenticated {
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+.type-badge.anonymous {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+/* Storage Badges */
+.storage-badge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.storage-badge.local {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+
+.storage-badge.blob {
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+/* Health Status */
+.health-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+.status-dot.healthy {
+  background: var(--success-500);
+}
+
+.status-dot.error {
+  background: var(--error-500);
+}
+
+.status-dot.checking {
+  background: var(--warning-500);
+}
+
+@keyframes pulse-dot {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Fallback Content */
+.fallback-content {
+  display: none;
+  padding: 2rem;
+  text-align: center;
+  max-width: 600px;
+  margin: 2rem auto;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.no-js .fallback-content {
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .error-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .error-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+  }
+}

@@ -1,0 +1,471 @@
+/* src/styles/pages/home.css - Home Page Styles */
+
+.home-container {
+  min-height: 100vh;
+  background: var(--gray-50);
+}
+
+/* Welcome Section */
+.welcome-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+  align-items: center;
+  margin-bottom: var(--space-16);
+}
+
+.welcome-content h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}
+
+.welcome-subtitle {
+  font-size: 1.125rem;
+  color: var(--gray-600);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+.welcome-features {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--gray-700);
+}
+
+.feature-icon {
+  font-size: 1.25rem;
+}
+
+.welcome-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Plant Illustration */
+.plant-illustration {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.plant-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: sway 4s ease-in-out infinite;
+}
+
+.plant-pot {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 60px;
+  background: linear-gradient(135deg, #8B4513, #A0522D);
+  border-radius: 0 0 20px 20px;
+}
+
+.plant-stem {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 80px;
+  background: #228B22;
+  border-radius: 2px;
+}
+
+.plant-leaves {
+  position: relative;
+}
+
+.leaf {
+  position: absolute;
+  font-size: 2rem;
+  animation: leafSway 3s ease-in-out infinite;
+}
+
+.leaf-1 {
+  top: 20px;
+  left: 80px;
+  animation-delay: 0s;
+}
+
+.leaf-2 {
+  top: 60px;
+  left: 110px;
+  animation-delay: 1s;
+}
+
+.leaf-3 {
+  top: 40px;
+  left: 50px;
+  animation-delay: 2s;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes leafSway {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(5deg) scale(1.05); }
+}
+
+/* Detection Section */
+.detection-section {
+  background: white;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-12);
+}
+
+.tab-navigation {
+  display: flex;
+  background: var(--gray-100);
+  margin: 0 var(--space-6) var(--space-6);
+  border-radius: var(--radius-xl);
+  padding: var(--space-1);
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-6);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.tab-btn.active {
+  background: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-btn:hover:not(.active) {
+  background: var(--gray-200);
+}
+
+.tab-icon {
+  font-size: 1.5rem;
+}
+
+.tab-text {
+  font-weight: 500;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+}
+
+.tab-btn.active .tab-text {
+  color: var(--primary-600);
+}
+
+.tab-desc {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+.tab-content {
+  padding: 0 var(--space-6) var(--space-8);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* Info Section */
+.info-section {
+  margin-top: var(--space-16);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-8);
+}
+
+.info-card {
+  background: white;
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.info-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.info-card h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: var(--space-3);
+  text-align: center;
+}
+
+.info-card p {
+  color: var(--gray-600);
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+}
+
+.info-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.info-list li:last-child {
+  border-bottom: none;
+}
+
+/* Results Section */
+.results-section {
+  background: white;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+  margin-top: var(--space-12);
+}
+
+.result-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.result-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+  align-items: center;
+}
+
+.result-image {
+  position: relative;
+}
+
+.result-image img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.result-overlay {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.result-header {
+  text-align: center;
+}
+
+.disease-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: 1.125rem;
+  font-weight: 600;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-xl);
+}
+
+.disease-status.healthy {
+  background: var(--success-100);
+  color: var(--success-800);
+  border: 1px solid var(--success-300);
+}
+
+.disease-status.diseased {
+  background: var(--error-100);
+  color: var(--error-800);
+  border: 1px solid var(--error-300);
+}
+
+.result-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.detail-item.recommendation {
+  background: var(--primary-50);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--primary-200);
+}
+
+.detail-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-600);
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: var(--gray-800);
+}
+
+.healthy-text {
+  color: var(--success-600);
+  font-weight: 600;
+}
+
+.disease-text {
+  color: var(--error-600);
+  font-weight: 600;
+}
+
+.confidence-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--gray-200);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: var(--space-3);
+}
+
+.confidence-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width var(--transition-normal);
+}
+
+.confidence-fill.high {
+  background: var(--success-500);
+}
+
+.confidence-fill.medium {
+  background: var(--warning-500);
+}
+
+.confidence-fill.low {
+  background: var(--error-500);
+}
+
+.confidence-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.result-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .welcome-section {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    text-align: center;
+  }
+
+  .result-card {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-content h2 {
+    font-size: 2rem;
+  }
+
+  .welcome-features {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .tab-navigation {
+    margin: 0 var(--space-3) var(--space-6);
+  }
+
+  .tab-btn {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .tab-desc {
+    display: none;
+  }
+
+  .tab-content {
+    padding: 0 var(--space-3) var(--space-6);
+  }
+
+  .detection-section,
+  .results-section {
+    margin-left: var(--space-3);
+    margin-right: var(--space-3);
+    border-radius: var(--radius-xl);
+  }
+
+  .result-actions {
+    flex-direction: column;
+  }
+}
