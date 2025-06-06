@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const webpack = require("webpack"); // Add this import
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -100,6 +101,15 @@ module.exports = {
   },
   
   plugins: [
+    // ✅ Add DefinePlugin to inject environment variables
+    new webpack.DefinePlugin({
+      'process.env': {
+        API_URL: JSON.stringify(process.env.API_URL || "https://leaves-disease-api.vercel.app"),
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || "development"),
+        VERSION: JSON.stringify(process.env.npm_package_version || "2.0.0"),
+      }
+    }),
+    
     new HtmlWebpackPlugin({
       template: "./index.html",
       filename: "index.html",
