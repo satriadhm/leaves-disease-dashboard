@@ -146,13 +146,13 @@ export default class RegisterPage {
               <span class="error-message" id="termsError"></span>
             </div>
             
-            <button type="submit" class="btn btn-primary" id="registerBtn" ${this.isLoading ? 'disabled' : ''}>
-              ${
-                this.isLoading
-    '<span class="btn-spinner"></span> Mendaftar...' :
-    'Daftar Sekarang'
-}
-            </button>
+<button type="submit" class="btn btn-primary" id="registerBtn" ${this.isLoading ? 'disabled' : ''}>
+  ${
+    this.isLoading
+      ? '<span class="btn-spinner"></span> Mendaftar...'
+      : 'Daftar Sekarang'
+  }
+</button>
           </form>
           
           <div class="auth-footer">
@@ -422,7 +422,7 @@ export default class RegisterPage {
   }
 
   clearFieldError(fieldName) {
-    const errorElement = document.getElementById(`${fieldName}Error`);
+    const errorElement = document.getElementById(fieldName + 'Error');
     if (errorElement) {
       errorElement.textContent = '';
     }

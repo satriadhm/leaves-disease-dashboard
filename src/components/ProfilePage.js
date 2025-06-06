@@ -861,6 +861,7 @@ export default class ProfilePage {
         new CustomEvent('showSuccess', {
           detail: 'Statistik berhasil diekspor',
         }),
+      );
 
     } catch (error) {
       window.dispatchEvent(
