@@ -1,6 +1,6 @@
 class ApiService {
   constructor() {
-    this.baseURL = process.env.API_URL || 'http://leaves-disease-api-production.up.railway.app/';
+    this.baseURL = process.env.API_URL || 'http://leaves-disease-api-production.up.railway.app';
     this.token = localStorage.getItem('authToken');
     this.maxRetries = 3;
     this.retryDelay = 1000; // 1 second base delay
