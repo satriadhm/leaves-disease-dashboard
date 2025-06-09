@@ -574,28 +574,28 @@ export default class PitchDeckPage {
                     <h3>Tech Lead</h3>
                     <div class="member-name">Software Engineer</div>
                     <div class="member-expertise">Full-stack development, AI/ML integration</div>
-                    <div class="member-background">5+ years in agricultural technology</div>
+                    <div class="member-background">Glorious Satria</div>
                   </div>
                   <div class="team-member">
                     <div class="member-avatar">🧬</div>
                     <h3>AI Specialist</h3>
                     <div class="member-name">ML Engineer</div>
                     <div class="member-expertise">Computer vision, deep learning</div>
-                    <div class="member-background">PhD in Machine Learning</div>
+                    <div class="member-background">Dina Merauke</div>
                   </div>
                   <div class="team-member">
                     <div class="member-avatar">🌾</div>
                     <h3>Agricultural Expert</h3>
                     <div class="member-name">Plant Pathologist</div>
                     <div class="member-expertise">Plant diseases, crop management</div>
-                    <div class="member-background">15+ years in agriculture research</div>
+                    <div class="member-background">Surya Merauke</div>
                   </div>
                   <div class="team-member">
                     <div class="member-avatar">💼</div>
                     <h3>Business Lead</h3>
                     <div class="member-name">Product Manager</div>
                     <div class="member-expertise">Market strategy, partnerships</div>
-                    <div class="member-background">MBA, 10+ years in AgTech</div>
+                    <div class="member-background">Amin Cilacap</div>
                   </div>
                 </div>
                 <div class="team-advisors">
