@@ -201,7 +201,7 @@ export default class PredictionHistory {
                 ${isHealthy ? '🌱' : '🦠'} ${diseaseDisplay}
               </span>
               <span class="confidence-badge ${confidenceColor}">
-                ${Math.round(prediction.confidence)}%
+                ${prediction.confidence}%
               </span>
             </div>
             <div class="card-actions">
@@ -259,7 +259,7 @@ export default class PredictionHistory {
   }
 
   getConfidenceColor(confidence) {
-    if (confidence >= 80) {
+    if (confidence >= 0.80) {
       return 'high';
     }
     if (confidence >= 60) {
@@ -470,7 +470,7 @@ export default class PredictionHistory {
     document.getElementById('totalPredictions').textContent = stats.total;
     document.getElementById('healthyPredictions').textContent = stats.healthy;
     document.getElementById('diseasedPredictions').textContent = stats.diseased;
-    document.getElementById('avgConfidence').textContent = `${Math.round(stats.avgConfidence)}%`;
+    document.getElementById('avgConfidence').textContent = `${stats.avgConfidence}%`;
   }
 
   renderPredictionList() {
@@ -580,7 +580,7 @@ export default class PredictionHistory {
       pred => `
                   <div class="prediction-item">
                     <span class="pred-name">${this.formatDiseaseName(pred.class)}</span>
-                    <span class="pred-confidence">${Math.round(pred.confidence)}%</span>
+                    <span class="pred-confidence">${pred.confidence}%</span>
                   </div>
                 `,
     )

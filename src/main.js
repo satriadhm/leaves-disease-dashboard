@@ -20,32 +20,25 @@ class App {
   init() {
     console.log('🌱 Initializing Plant Disease Detection App...');
 
-    // Setup global error handling
     this.setupErrorHandling();
 
-    // Setup router
     this.setupRouter();
 
-    // Setup global event listeners
     this.setupGlobalEvents();
 
-    // Initialize components
     this.initializeComponents();
 
-    // Start the application
     this.start();
 
     console.log('✅ App initialized successfully!');
   }
 
   setupErrorHandling() {
-    // Global error handler
     window.addEventListener('error', e => {
       console.error('Global error:', e.error);
       this.handleError(e.error);
     });
 
-    // Unhandled promise rejection handler
     window.addEventListener('unhandledrejection', e => {
       console.error('Unhandled promise rejection:', e.reason);
       this.handleError(e.reason);
@@ -53,7 +46,6 @@ class App {
   }
 
   setupRouter() {
-    // Add routes with authentication requirements
     this.router.addRoute('/', HomePage, {
       title: 'Plant Disease Detection - Beranda',
       description: 'Deteksi penyakit tanaman dengan AI yang akurat dan mudah digunakan',
@@ -81,7 +73,6 @@ class App {
       description: 'Kelola profil dan pengaturan akun Anda',
     });
 
-    // ADDED: Admin Dashboard route
     this.router.addRoute('/dashboard', AdminDashboard, {
       requiresAuth: true,
       requiresRole: 'admin',
@@ -89,16 +80,13 @@ class App {
       description: 'Dashboard admin untuk mengelola sistem dan pengguna',
     });
 
-    // Set up router hooks
     this.router.setBeforeRouteChange((to, from) => {
       console.log(`🧭 Navigating from ${from} to ${to}`);
 
-      // Show loading for authenticated routes
       const route = this.router.routes[to];
       if (route && route.requiresAuth) {
-        // Check auth before showing loading
         if (!authManager.isAuthenticated()) {
-          return true; // Let router handle auth redirect
+          return true;
         }
       }
 
@@ -108,14 +96,11 @@ class App {
     this.router.setAfterRouteChange((to, _from) => {
       console.log(`✅ Navigation complete: ${to}`);
 
-      // Analytics or tracking can be added here
       this.trackPageView(to);
     });
 
-    // Set up 404 handler
     this.router.setNotFoundHandler(this.create404Component());
 
-    // Set up error handler
     this.router.setErrorHandler((error, path) => {
       console.error(`Router error on ${path}:`, error);
       window.dispatchEvent(
@@ -127,7 +112,6 @@ class App {
   }
 
   setupGlobalEvents() {
-    // Network status monitoring
     window.addEventListener('online', () => {
       window.dispatchEvent(
         new CustomEvent('showSuccess', {
@@ -144,28 +128,23 @@ class App {
       );
     });
 
-    // Keyboard shortcuts
     document.addEventListener('keydown', e => {
       this.handleKeyboardShortcuts(e);
     });
 
-    // Auth state changes
     window.addEventListener('authStateChanged', e => {
       const { isAuthenticated, user } = e.detail;
       console.log('Auth state changed:', { isAuthenticated, user });
 
-      // Update UI based on auth state
       this.handleAuthStateChange(isAuthenticated, user);
     });
 
-    // Service worker registration (for future PWA features)
     if ('serviceWorker' in navigator) {
       this.registerServiceWorker();
     }
   }
 
   initializeComponents() {
-    // Initialize notification system
     this.notificationManager = new NotificationManager();
     this.loadingManager = new LoadingManager();
 
@@ -174,7 +153,6 @@ class App {
   }
 
   start() {
-    // Wait for DOM to be ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
         this.startRouter();
@@ -185,39 +163,31 @@ class App {
   }
 
   startRouter() {
-    // Start the router
     this.router.start();
 
-    // Show welcome message for new users
     this.showWelcomeMessage();
 
-    // Check for updates
     this.checkForUpdates();
   }
 
   handleKeyboardShortcuts(e) {
-    // Only handle shortcuts when not typing in inputs
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
       return;
     }
 
-    // Global shortcuts
     if (e.ctrlKey || e.metaKey) {
       switch (e.key) {
         case 'k':
           e.preventDefault();
-          // Focus search (if available)
           this.focusSearch();
           break;
         case '/':
           e.preventDefault();
-          // Show help/shortcuts
           this.showKeyboardShortcuts();
           break;
       }
     }
 
-    // Navigation shortcuts
     switch (e.key) {
       case 'h':
         if (!e.ctrlKey && !e.metaKey) {
@@ -240,7 +210,6 @@ class App {
         }
         break;
       case 'Escape':
-        // Close modals or notifications
         this.closeModalsAndNotifications();
         break;
     }
@@ -250,7 +219,6 @@ class App {
     if (isAuthenticated) {
       console.log(`👋 Welcome back, ${user.username}!`);
 
-      // Redirect to intended page if stored
       const intendedPath = sessionStorage.getItem('intendedPath');
       if (intendedPath && intendedPath !== '/login' && intendedPath !== '/register') {
         sessionStorage.removeItem('intendedPath');
@@ -259,7 +227,6 @@ class App {
     } else {
       console.log('👋 User logged out');
 
-      // Store current path if user gets logged out
       const currentPath = this.router.getCurrentPath();
       if (currentPath !== '/' && currentPath !== '/login' && currentPath !== '/register') {
         sessionStorage.setItem('intendedPath', currentPath);
