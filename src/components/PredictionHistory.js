@@ -186,7 +186,7 @@ export default class PredictionHistory {
     return `
       <div class="prediction-card" data-id="${prediction._id}">
         <div class="card-image">
-          <img src="${prediction.imageUrl}" alt="Plant image" loading="lazy">
+          <img src="${prediction.imageFullUrl}" alt="Plant image" loading="lazy">
           <div class="image-overlay">
             <button class="btn-view-detail" data-id="${prediction._id}">
               👁️ Lihat Detail
@@ -552,7 +552,7 @@ export default class PredictionHistory {
     modalBody.innerHTML = `
       <div class="prediction-detail">
         <div class="detail-image">
-          <img src="${prediction.imageUrl}" alt="Plant image">
+          <img src="${prediction.imageFullUrl}" alt="Plant image">
         </div>
         
         <div class="detail-info">
