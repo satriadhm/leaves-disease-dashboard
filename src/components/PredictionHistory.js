@@ -580,7 +580,7 @@ export default class PredictionHistory {
       pred => `
                   <div class="prediction-item">
                     <span class="pred-name">${this.formatDiseaseName(pred.class)}</span>
-                    <span class="pred-confidence">${pred.confidence}%</span>
+                    <span class="pred-confidence">${(pred.confidence * 100).toFixed(2)}%</span>
                   </div>
                 `,
     )
@@ -719,7 +719,7 @@ export default class PredictionHistory {
       new Date(pred.createdAt).toLocaleString('id-ID'),
       pred.imageName,
       this.formatDiseaseName(pred.predictedClass),
-      Math.round(pred.confidence),
+      (pred.confidence * 100).toFixed(2),
       pred.notes || '',
     ]);
 
