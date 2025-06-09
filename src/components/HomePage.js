@@ -76,24 +76,6 @@ export default class HomePage {
         </header>
 
         <main class="main-content">
-          <!-- Investor Banner -->
-          <div class="investor-banner">
-            <div class="banner-content">
-              <div class="banner-text">
-                <h3>🚀 Interested in Investment Opportunities?</h3>
-                <p>Discover how our AI-powered agricultural solution is revolutionizing crop disease management.</p>
-              </div>
-              <div class="banner-actions">
-                <button class="btn btn-primary banner-btn" id="viewPitchBtn">
-                  📊 View Pitch Deck
-                </button>
-                <button class="btn btn-outline banner-btn" id="contactInvestorBtn">
-                  💼 Contact Us
-                </button>
-              </div>
-            </div>
-          </div>
-
           <div class="welcome-section">
             <div class="welcome-content">
               <h2>🔬 Deteksi Penyakit Tanaman dengan AI</h2>
@@ -384,9 +366,6 @@ export default class HomePage {
           }
               <button class="btn btn-secondary" id="profileBtn" title="Profil">
                 👤 Profil
-              </button>
-              <button class="btn btn-outline" id="pitchBtn" title="Investor Presentation">
-                📈 Pitch Deck
               </button>
               <button class="btn btn-outline" id="logoutBtn" title="Keluar">
                 🚪 Keluar
