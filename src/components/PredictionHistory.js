@@ -181,7 +181,7 @@ export default class PredictionHistory {
 
     const diseaseDisplay = this.formatDiseaseName(prediction.predictedClass);
     const isHealthy = prediction.predictedClass.toLowerCase().includes('healthy');
-    const confidenceColor = this.getConfidenceColor(prediction.confidence);
+    const confidenceColor = this.getConfidenceColor((prediction.confidence * 100).toFixed(2));
 
     return `
       <div class="prediction-card" data-id="${prediction._id}">
@@ -201,7 +201,7 @@ export default class PredictionHistory {
                 ${isHealthy ? '🌱' : '🦠'} ${diseaseDisplay}
               </span>
               <span class="confidence-badge ${confidenceColor}">
-                ${prediction.confidence}%
+                ${(prediction.confidence * 100).toFixed(2)}%
               </span>
             </div>
             <div class="card-actions">
@@ -259,7 +259,7 @@ export default class PredictionHistory {
   }
 
   getConfidenceColor(confidence) {
-    if (confidence >= 0.80) {
+    if (confidence >= 80) {
       return 'high';
     }
     if (confidence >= 60) {
@@ -561,8 +561,8 @@ export default class PredictionHistory {
             <div class="prediction-result">
               <div class="result-main">
                 <span class="disease-name">${this.formatDiseaseName(prediction.predictedClass)}</span>
-                <span class="confidence-badge ${this.getConfidenceColor(prediction.confidence)}">
-                  ${Math.round(prediction.confidence)}% Confidence
+                <span class="confidence-badge ${this.getConfidenceColor((prediction.confidence * 100).toFixed(2))}">
+                  ${Math.round((prediction.confidence * 100).toFixed(2))}% Confidence
                 </span>
               </div>
             </div>
