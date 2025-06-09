@@ -1,6 +1,6 @@
 class ApiService {
   constructor() {
-    this.baseURL = process.env.API_URL || 'http://leaves-disease-api-production.up.railway.app';
+    this.baseURL = process.env.API_URL || 'https://leaves-disease-api-production.up.railway.app';
     this.token = localStorage.getItem('authToken');
     this.maxRetries = 3;
     this.retryDelay = 1000; // 1 second base delay
@@ -19,7 +19,6 @@ class ApiService {
     return headers;
   }
 
-  // Sleep utility for retry delays
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -50,7 +49,6 @@ class ApiService {
     return false;
   }
 
-  // Enhanced request method with retry logic
   async request(endpoint, options = {}, retryCount = 0) {
     const url = `${this.baseURL}${endpoint}`;
     const config = {
@@ -59,18 +57,15 @@ class ApiService {
       ...options,
     };
 
-    // Remove custom options from config
     delete config.auth;
     delete config.timeout;
 
     try {
       console.log(`🚀 API Request: ${config.method || 'GET'} ${endpoint} (attempt ${retryCount + 1})`);
       
-      // Create abort controller for timeout
       const controller = new AbortController();
       config.signal = controller.signal;
       
-      // Set timeout
       const timeoutId = setTimeout(() => {
         controller.abort();
       }, options.timeout || 15000);
@@ -84,7 +79,6 @@ class ApiService {
       if (contentType && contentType.includes('application/json')) {
         data = await response.json();
       } else {
-        // Handle non-JSON responses
         const text = await response.text();
         data = { message: text || `HTTP ${response.status}` };
       }
@@ -102,17 +96,14 @@ class ApiService {
     } catch (error) {
       console.error(`❌ API Error (${endpoint}, attempt ${retryCount + 1}):`, error.message);
       
-      // Handle aborted requests (timeout)
       if (error.name === 'AbortError') {
         error.message = 'Request timeout - server took too long to respond';
       }
       
-      // Handle network errors
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
         error.message = 'Network error - check your internet connection';
       }
 
-      // Retry logic for retryable errors
       if (this.isRetryableError(error) && retryCount < this.maxRetries) {
         const delay = this.retryDelay * Math.pow(2, retryCount); // Exponential backoff
         console.log(`⏳ Retrying ${endpoint} in ${delay}ms... (${retryCount + 1}/${this.maxRetries})`);
@@ -121,12 +112,10 @@ class ApiService {
         return this.request(endpoint, options, retryCount + 1);
       }
 
-      // If not retryable or max retries reached, throw the error
       throw error;
     }
   }
 
-  // Authentication methods with enhanced error handling
   async login(credentials) {
     try {
       const response = await this.request('/api/auth/signin', {
@@ -151,7 +140,6 @@ class ApiService {
 
       return response;
     } catch (error) {
-      // Enhanced error messages for login
       if (error.status === 404) {
         throw new Error('Username tidak ditemukan');
       } else if (error.status === 401) {
@@ -175,7 +163,6 @@ class ApiService {
         timeout: 25000 // Longer timeout for registration
       });
     } catch (error) {
-      // Enhanced error messages for registration
       if (error.status === 400) {
         if (error.message.includes('Username')) {
           throw new Error('Username sudah digunakan');
@@ -197,7 +184,6 @@ class ApiService {
 
   async logout() {
     try {
-      // Try to call logout endpoint, but don't fail if it doesn't work
       await this.request('/api/auth/logout', {
         method: 'POST',
         auth: true,
@@ -206,7 +192,6 @@ class ApiService {
     } catch (error) {
       console.warn('Logout API call failed (continuing anyway):', error.message);
     } finally {
-      // Always clear local storage regardless of API call result
       this.token = null;
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
@@ -231,7 +216,6 @@ class ApiService {
     }
   }
 
-  // Prediction methods with enhanced error handling
   async predictDisease(formData) {
     try {
       const url = `${this.baseURL}/api/predict`;
@@ -241,7 +225,6 @@ class ApiService {
         headers['x-access-token'] = this.token;
       }
 
-      // Use fetch directly for file upload with retry logic
       let lastError;
       for (let attempt = 0; attempt < this.maxRetries; attempt++) {
         try {
@@ -277,12 +260,10 @@ class ApiService {
             error.message = 'Upload timeout - file might be too large or connection slow';
           }
 
-          // Don't retry for client errors (4xx)
           if (error.status >= 400 && error.status < 500) {
             break;
           }
 
-          // Retry for network errors and server errors
           if (attempt < this.maxRetries - 1 && this.isRetryableError(error)) {
             const delay = this.retryDelay * Math.pow(2, attempt);
             console.log(`⏳ Retrying prediction in ${delay}ms...`);
@@ -294,7 +275,6 @@ class ApiService {
         }
       }
 
-      // Enhance error messages for prediction
       if (lastError.status === 400) {
         throw new Error('File tidak valid. Gunakan gambar JPG, PNG, atau WebP (max 5MB)');
       } else if (lastError.message.includes('timeout')) {
@@ -361,7 +341,6 @@ class ApiService {
     }
   }
 
-  // User methods
   async getUserProfile() {
     try {
       return await this.request('/api/user/profile', {
@@ -412,61 +391,105 @@ class ApiService {
       throw error;
     }
   }
-
-  // Admin methods (keeping existing implementation)
   async getAllUsers(params = {}) {
-    const searchParams = new URLSearchParams(params);
-    return await this.request(`/api/admin/users?${searchParams}`, {
-      method: 'GET',
-      auth: true,
-    });
+    try {
+      const searchParams = new URLSearchParams(params);
+      return await this.request(`/api/admin/users?${searchParams}`, {
+        method: 'GET',
+        auth: true,
+        timeout: 15000
+      });
+    } catch (error) {
+      if (error.status === 403) {
+        throw new Error('Admin access required');
+      }
+      throw error;
+    }
   }
 
   async getUserById(id) {
-    return await this.request(`/api/admin/users/${id}`, {
-      method: 'GET',
-      auth: true,
-    });
+    try {
+      return await this.request(`/api/admin/users/${id}`, {
+        method: 'GET',
+        auth: true,
+        timeout: 10000
+      });
+    } catch (error) {
+      if (error.status === 403) {
+        throw new Error('Admin access required');
+      } else if (error.status === 404) {
+        throw new Error('User not found');
+      }
+      throw error;
+    }
   }
 
   async updateUser(id, userData) {
-    return await this.request(`/api/admin/users/${id}`, {
-      method: 'PUT',
-      auth: true,
-      body: JSON.stringify(userData),
-    });
+    try {
+      return await this.request(`/api/admin/users/${id}`, {
+        method: 'PUT',
+        auth: true,
+        body: JSON.stringify(userData),
+        timeout: 15000
+      });
+    } catch (error) {
+      if (error.status === 403) {
+        throw new Error('Admin access required');
+      } else if (error.status === 404) {
+        throw new Error('User not found');
+      }
+      throw error;
+    }
   }
 
   async deleteUser(id) {
-    return await this.request(`/api/admin/users/${id}`, {
-      method: 'DELETE',
-      auth: true,
-    });
-  }
-
-  async getUserStats() {
-    return await this.request('/api/admin/users/stats', {
-      method: 'GET',
-      auth: true,
-    });
-  }
-
-  async getAllPredictions(params = {}) {
-    const searchParams = new URLSearchParams(params);
-    return await this.request(`/api/admin/predictions?${searchParams}`, {
-      method: 'GET',
-      auth: true,
-    });
+    try {
+      return await this.request(`/api/admin/users/${id}`, {
+        method: 'DELETE',
+        auth: true,
+        timeout: 10000
+      });
+    } catch (error) {
+      if (error.status === 403) {
+        throw new Error('Admin access required');
+      } else if (error.status === 404) {
+        throw new Error('User not found');
+      }
+      throw error;
+    }
   }
 
   async getPredictionStats() {
-    return await this.request('/api/predictions/stats', {
-      method: 'GET',
-      auth: true,
-    });
+    try {
+      return await this.request('/api/predictions/stats', {
+        method: 'GET',
+        auth: true,
+        timeout: 15000
+      });
+    } catch (error) {
+      if (error.status === 403) {
+        throw new Error('Admin access required');
+      }
+      throw error;
+    }
   }
 
-  // Health check methods with shorter timeouts
+  async getAllPredictions(params = {}) {
+    try {
+      const searchParams = new URLSearchParams(params);
+      return await this.request(`/api/admin/predictions?${searchParams}`, {
+        method: 'GET',
+        auth: true,
+        timeout: 15000
+      });
+    } catch (error) {
+      if (error.status === 403) {
+        throw new Error('Admin access required');
+      }
+      throw error;
+    }
+  }
+
   async getHealthStatus() {
     try {
       return await this.request('/health', {
@@ -489,18 +512,7 @@ class ApiService {
     }
   }
 
-  async getDatabaseHealth() {
-    try {
-      return await this.request('/health/database', {
-        method: 'GET',
-        timeout: 8000
-      });
-    } catch (error) {
-      throw new Error('Database tidak tersedia');
-    }
-  }
 
-  // Utility methods
   isAuthenticated() {
     return !!this.token;
   }

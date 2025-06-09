@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-// src/components/AdminDashboard.js
 import apiService from '../services/api.js';
 import authManager from '../utils/auth.js';
 
@@ -222,7 +220,6 @@ export default class AdminDashboard {
                   <th>Email</th>
                   <th>Role</th>
                   <th>Status</th>
-                  <th>Prediksi</th>
                   <th>Bergabung</th>
                   <th>Login Terakhir</th>
                   <th>Aksi</th>
@@ -230,7 +227,7 @@ export default class AdminDashboard {
               </thead>
               <tbody id="usersTableBody">
                 <tr>
-                  <td colspan="9" class="loading-cell">
+                  <td colspan="8" class="loading-cell">
                     <div class="loading-spinner"></div>
                     <span>Memuat data pengguna...</span>
                   </td>
@@ -280,7 +277,6 @@ export default class AdminDashboard {
                   <th>Prediksi</th>
                   <th>Confidence</th>
                   <th>Tipe</th>
-                  <th>Storage</th>
                   <th>Waktu Proses</th>
                   <th>Tanggal</th>
                   <th>Aksi</th>
@@ -288,7 +284,7 @@ export default class AdminDashboard {
               </thead>
               <tbody id="predictionsTableBody">
                 <tr>
-                  <td colspan="9" class="loading-cell">
+                  <td colspan="8" class="loading-cell">
                     <div class="loading-spinner"></div>
                     <span>Memuat data prediksi...</span>
                   </td>
@@ -536,20 +532,50 @@ export default class AdminDashboard {
     }
   }
 
+  // FIXED: Calculate user stats from user list instead of calling non-existent endpoint
   async loadOverviewData() {
     try {
-      // Load user stats
-      const userStatsResponse = await apiService.getUserStats();
-      this.stats.users = userStatsResponse.data;
-
-      // Load prediction stats
+      // Load prediction stats (this endpoint exists)
       const predictionStatsResponse = await apiService.getPredictionStats();
       this.stats.predictions = predictionStatsResponse.data;
+
+      // Load users data to calculate user stats (since getUserStats doesn't exist)
+      const usersResponse = await apiService.getAllUsers({ limit: 1000 }); // Get all users for stats
+      this.users = usersResponse.data.users || [];
+      
+      // Calculate user stats from the users list
+      this.stats.users = this.calculateUserStats(this.users);
 
       this.updateOverviewDisplay();
     } catch (error) {
       console.error('Error loading overview data:', error);
     }
+  }
+
+  // NEW: Calculate user statistics from users list
+  calculateUserStats(users) {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+    
+    const totalUsers = users.length;
+    const activeUsers = users.filter(user => 
+      user.status === 'active' && 
+      user.lastLogin && 
+      new Date(user.lastLogin) > thirtyDaysAgo
+    ).length;
+    
+    const adminUsers = users.filter(user => 
+      user.roles && user.roles.some(role => role.includes('ADMIN'))
+    ).length;
+    
+    return {
+      overview: {
+        totalUsers,
+        activeUsers,
+        adminUsers,
+        inactiveUsers: totalUsers - activeUsers
+      }
+    };
   }
 
   updateOverviewDisplay() {
@@ -559,16 +585,22 @@ export default class AdminDashboard {
     document.getElementById('totalUsers').textContent = users.overview?.totalUsers || 0;
     document.getElementById('activeUsers').textContent = users.overview?.activeUsers || 0;
 
-    // Update prediction stats
+    // Update prediction stats - FIXED to match contract response format
     document.getElementById('totalPredictions').textContent =
       predictions.overview?.totalPredictions || 0;
-    document.getElementById('healthyPredictions').textContent =
-      predictions.predictionsByClass?.filter(p => p._id.includes('healthy')).length || 0;
-    document.getElementById('diseasedPredictions').textContent =
-      (predictions.overview?.totalPredictions || 0) -
-      (predictions.predictionsByClass?.filter(p => p._id.includes('healthy')).length || 0);
+    
+    // Calculate healthy vs diseased from predictionsByClass
+    const healthyCount = predictions.predictionsByClass?.filter(p => 
+      p._id.toLowerCase().includes('healthy')
+    ).reduce((sum, p) => sum + p.count, 0) || 0;
+    
+    const totalPreds = predictions.overview?.totalPredictions || 0;
+    const diseasedCount = totalPreds - healthyCount;
+    
+    document.getElementById('healthyPredictions').textContent = healthyCount;
+    document.getElementById('diseasedPredictions').textContent = diseasedCount;
     document.getElementById('avgConfidence').textContent =
-      `${Math.round(predictions.overview?.avgProcessingTime || 0)}%`;
+      `${Math.round(predictions.overview?.avgProcessingTime || 0)}ms`; // This seems to be processing time, not confidence
 
     this.renderCharts();
     this.loadRecentActivity();
@@ -694,7 +726,7 @@ export default class AdminDashboard {
     if (this.users.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="9" class="no-data">Tidak ada data pengguna</td>
+          <td colspan="8" class="no-data">Tidak ada data pengguna</td>
         </tr>
       `;
       return;
@@ -710,12 +742,12 @@ export default class AdminDashboard {
           </div>
         </td>
         <td>
-          <div class="user-name">${user.profile?.firstName || ''} ${user.profile?.lastName || ''}</div>
+          <div class="user-name">${user.profile?.firstName || ''} ${user.profile?.lastName || user.username}</div>
           <div class="user-username">@${user.username}</div>
         </td>
         <td>${user.email}</td>
         <td>
-          <span class="role-badge ${user.roles?.[0]?.toLowerCase()}">
+          <span class="role-badge ${user.roles?.[0]?.toLowerCase().replace('role_', '')}">
             ${user.roles?.[0]?.replace('ROLE_', '') || 'User'}
           </span>
         </td>
@@ -724,14 +756,13 @@ export default class AdminDashboard {
             ${user.status === 'active' ? '✅ Aktif' : '❌ Tidak Aktif'}
           </span>
         </td>
-        <td>${user.totalPredictions || 0}</td>
         <td>${this.formatDate(user.createdAt)}</td>
         <td>${this.formatDate(user.lastLogin) || 'Tidak pernah'}</td>
         <td>
           <div class="action-buttons">
-            <button class="btn-action" onclick="this.viewUser('${user._id}')" title="Lihat">👁️</button>
-            <button class="btn-action" onclick="this.editUser('${user._id}')" title="Edit">✏️</button>
-            <button class="btn-action danger" onclick="this.deleteUser('${user._id}')" title="Hapus">🗑️</button>
+            <button class="btn-action" onclick="this.viewUser('${user.id}')" title="Lihat">👁️</button>
+            <button class="btn-action" onclick="this.editUser('${user.id}')" title="Edit">✏️</button>
+            <button class="btn-action danger" onclick="this.deleteUser('${user.id}')" title="Hapus">🗑️</button>
           </div>
         </td>
       </tr>
@@ -760,7 +791,7 @@ export default class AdminDashboard {
     if (this.predictions.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="9" class="no-data">Tidak ada data prediksi</td>
+          <td colspan="8" class="no-data">Tidak ada data prediksi</td>
         </tr>
       `;
       return;
@@ -771,7 +802,7 @@ export default class AdminDashboard {
         prediction => `
       <tr>
         <td>
-          <img src="${prediction.imageUrl}" alt="Plant" class="table-image">
+          <img src="${prediction.image?.publicUrl || prediction.image?.fullUrl || prediction.imageUrl}" alt="Plant" class="table-image">
         </td>
         <td>${prediction.userId?.username || 'Anonymous'}</td>
         <td>
@@ -789,17 +820,12 @@ export default class AdminDashboard {
             ${prediction.predictionType}
           </span>
         </td>
-        <td>
-          <span class="storage-badge ${prediction.storageType}">
-            ${prediction.storageType}
-          </span>
-        </td>
         <td>${prediction.processingTime || '-'}</td>
         <td>${this.formatDate(prediction.createdAt)}</td>
         <td>
           <div class="action-buttons">
-            <button class="btn-action" onclick="this.viewPrediction('${prediction._id}')" title="Lihat">👁️</button>
-            <button class="btn-action danger" onclick="this.deletePrediction('${prediction._id}')" title="Hapus">🗑️</button>
+            <button class="btn-action" onclick="this.viewPrediction('${prediction.id}')" title="Lihat">👁️</button>
+            <button class="btn-action danger" onclick="this.deletePrediction('${prediction.id}')" title="Hapus">🗑️</button>
           </div>
         </td>
       </tr>
@@ -816,9 +842,13 @@ export default class AdminDashboard {
       const healthResponse = await apiService.getHealthStatus();
       this.updateHealthStatus('apiStatus', 'healthy', 'Connected');
 
-      // Check database
+      // Check database - FIXED to use correct response format
       this.updateHealthStatus('dbStatus', 'checking', 'Checking...');
-      this.updateHealthStatus('dbStatus', 'healthy', 'Connected');
+      if (healthResponse.database?.status === 'connected') {
+        this.updateHealthStatus('dbStatus', 'healthy', 'Connected');
+      } else {
+        this.updateHealthStatus('dbStatus', 'error', 'Disconnected');
+      }
 
       // Check model
       this.updateHealthStatus('modelStatus', 'checking', 'Checking...');
@@ -868,7 +898,7 @@ export default class AdminDashboard {
     document.getElementById('tfBackend').textContent = modelData.data?.tfBackend || 'cpu';
     document.getElementById('storageTypes').textContent = modelData.data?.storageConfig
       ? Object.keys(modelData.data.storageConfig).join(', ')
-      : 'local, blob';
+      : 'local';
   }
 
   // System action methods
@@ -979,7 +1009,6 @@ export default class AdminDashboard {
     );
   }
 
-  // Utility methods
   formatDate(dateString) {
     if (!dateString) {
       return null;

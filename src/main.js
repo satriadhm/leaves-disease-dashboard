@@ -1,4 +1,3 @@
-// src/main.js - Main Application Entry Point
 import './styles/main.css';
 import Router from './utils/router.js';
 import LoginPage from './components/LoginPage.js';
@@ -6,6 +5,7 @@ import RegisterPage from './components/RegisterPage.js';
 import HomePage from './components/HomePage.js';
 import PredictionHistory from './components/PredictionHistory.js';
 import ProfilePage from './components/ProfilePage.js';
+import AdminDashboard from './components/AdminDashboard.js';
 import NotificationManager, { LoadingManager } from './components/NotificationManager.js';
 import authManager from './utils/auth.js';
 
@@ -79,6 +79,14 @@ class App {
       requiresAuth: true,
       title: 'Profil - Plant Disease Detection',
       description: 'Kelola profil dan pengaturan akun Anda',
+    });
+
+    // ADDED: Admin Dashboard route
+    this.router.addRoute('/dashboard', AdminDashboard, {
+      requiresAuth: true,
+      requiresRole: 'admin',
+      title: 'Admin Dashboard - Plant Disease Detection',
+      description: 'Dashboard admin untuk mengelola sistem dan pengguna',
     });
 
     // Set up router hooks
@@ -226,6 +234,11 @@ class App {
           this.router.navigate('/history');
         }
         break;
+      case 'd':
+        if (!e.ctrlKey && !e.metaKey && authManager.isAdmin()) {
+          this.router.navigate('/dashboard');
+        }
+        break;
       case 'Escape':
         // Close modals or notifications
         this.closeModalsAndNotifications();
@@ -361,6 +374,7 @@ class App {
       { key: 'H', description: 'Ke Beranda' },
       { key: 'P', description: 'Ke Profil (jika login)' },
       { key: 'R', description: 'Ke Riwayat (jika login)' },
+      { key: 'D', description: 'Ke Dashboard (jika admin)' },
       { key: 'Ctrl/Cmd + K', description: 'Fokus Pencarian' },
       { key: 'Ctrl/Cmd + /', description: 'Tampilkan Shortcut' },
       { key: 'Escape', description: 'Tutup Modal/Notifikasi' },
@@ -413,15 +427,11 @@ class App {
 
   async registerServiceWorker() {
     try {
-      // Service worker registration for future PWA features
-      // const registration = await navigator.serviceWorker.register('/sw.js');
-      // console.log('ServiceWorker registered:', registration);
     } catch (error) {
       console.log('ServiceWorker registration failed:', error);
     }
   }
 
-  // Public API for external use
   getRouter() {
     return this.router;
   }
@@ -437,8 +447,6 @@ class App {
       }),
     );
   }
-
-  // Cleanup method
   destroy() {
     this.router.stop();
     this.notificationManager.clear();
@@ -446,10 +454,8 @@ class App {
   }
 }
 
-// Global app instance
 let app;
 
-// Initialize app when DOM is loaded
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     app = new App();
@@ -458,10 +464,8 @@ if (document.readyState === 'loading') {
   app = new App();
 }
 
-// Export for global access
 window.PlantDiseaseApp = app;
 
-// Global error recovery
 window.addEventListener('beforeunload', () => {
   if (app) {
     app.destroy();
