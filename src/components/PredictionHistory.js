@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-// src/components/PredictionHistory.js
 import apiService from '../services/api.js';
 import authManager from '../utils/auth.js';
 
@@ -340,13 +338,13 @@ export default class PredictionHistory {
     });
   }
 
-  afterRender() {
+  async afterRender() {
     if (!authManager.requireAuth()) {
       return;
     }
 
     this.bindEvents();
-    this.loadPredictions();
+    await this.loadPredictions();
     this.loadStats();
   }
 
@@ -416,8 +414,9 @@ export default class PredictionHistory {
       };
 
       const response = await apiService.getPredictionHistory(params);
-
+      console.log('Predictions loaded:', response.data);
       this.predictions = response.data.predictions;
+      console.log('Total predictions:', this.predictions.length);
       this.totalPages = response.data.pagination.totalPages;
 
       this.renderPredictionList();
@@ -437,8 +436,6 @@ export default class PredictionHistory {
 
   async loadStats() {
     try {
-      // This would typically come from a dedicated stats endpoint
-      // For now, we'll calculate from the current predictions
       const stats = this.calculateStats();
       this.updateStatsDisplay(stats);
     } catch (error) {
@@ -447,6 +444,7 @@ export default class PredictionHistory {
   }
 
   calculateStats() {
+    console.log(this.predictions);
     if (!this.predictions || this.predictions.length === 0) {
       return {
         total: 0,
@@ -463,7 +461,7 @@ export default class PredictionHistory {
     const diseased = total - healthy;
     const avgConfidence = this.predictions.reduce((sum, p) => sum + p.confidence, 0) / total;
 
-    return { total, healthy, diseased, avgConfidence };
+    return { total, healthy, diseased, avgConfidence: Math.round(avgConfidence * 100).toFixed(2) };
   }
 
   updateStatsDisplay(stats) {
