@@ -5,7 +5,6 @@ const urlsToCache = [
   '/static/js/main.js',
   '/static/css/main.css',
   '/manifest.json',
-  // Add other static assets as needed
 ];
 
 // Install event
