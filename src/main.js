@@ -1,3 +1,4 @@
+// src/main.js - Updated to include Pitch Deck route
 import './styles/main.css';
 import Router from './utils/router.js';
 import LoginPage from './components/LoginPage.js';
@@ -6,6 +7,7 @@ import HomePage from './components/HomePage.js';
 import PredictionHistory from './components/PredictionHistory.js';
 import ProfilePage from './components/ProfilePage.js';
 import AdminDashboard from './components/AdminDashboard.js';
+import PitchDeckPage from './components/PitchDeckPage.js'; // Add this import
 import NotificationManager, { LoadingManager } from './components/NotificationManager.js';
 import authManager from './utils/auth.js';
 
@@ -21,13 +23,9 @@ class App {
     console.log('🌱 Initializing Plant Disease Detection App...');
 
     this.setupErrorHandling();
-
     this.setupRouter();
-
     this.setupGlobalEvents();
-
     this.initializeComponents();
-
     this.start();
 
     console.log('✅ App initialized successfully!');
@@ -46,6 +44,7 @@ class App {
   }
 
   setupRouter() {
+    // Existing routes
     this.router.addRoute('/', HomePage, {
       title: 'Plant Disease Detection - Beranda',
       description: 'Deteksi penyakit tanaman dengan AI yang akurat dan mudah digunakan',
@@ -80,6 +79,13 @@ class App {
       description: 'Dashboard admin untuk mengelola sistem dan pengguna',
     });
 
+    // Add Pitch Deck route
+    this.router.addRoute('/pitch', PitchDeckPage, {
+      title: 'Pitch Deck - Plant Disease Detection Investment Presentation',
+      description: 'Investment presentation showcasing our AI-powered agricultural solution',
+    });
+
+    // Router configuration continues...
     this.router.setBeforeRouteChange((to, from) => {
       console.log(`🧭 Navigating from ${from} to ${to}`);
 
@@ -95,7 +101,6 @@ class App {
 
     this.router.setAfterRouteChange((to, _from) => {
       console.log(`✅ Navigation complete: ${to}`);
-
       this.trackPageView(to);
     });
 
@@ -135,7 +140,6 @@ class App {
     window.addEventListener('authStateChanged', e => {
       const { isAuthenticated, user } = e.detail;
       console.log('Auth state changed:', { isAuthenticated, user });
-
       this.handleAuthStateChange(isAuthenticated, user);
     });
 
@@ -164,9 +168,7 @@ class App {
 
   startRouter() {
     this.router.start();
-
     this.showWelcomeMessage();
-
     this.checkForUpdates();
   }
 
@@ -184,6 +186,11 @@ class App {
         case '/':
           e.preventDefault();
           this.showKeyboardShortcuts();
+          break;
+        case 'p':
+          e.preventDefault();
+          // Quick access to pitch deck
+          this.router.navigate('/pitch');
           break;
       }
     }
@@ -209,6 +216,12 @@ class App {
           this.router.navigate('/dashboard');
         }
         break;
+      case 'i':
+        if (!e.ctrlKey && !e.metaKey) {
+          // Quick access to pitch deck with 'i' for investor
+          this.router.navigate('/pitch');
+        }
+        break;
       case 'Escape':
         this.closeModalsAndNotifications();
         break;
@@ -228,7 +241,7 @@ class App {
       console.log('👋 User logged out');
 
       const currentPath = this.router.getCurrentPath();
-      if (currentPath !== '/' && currentPath !== '/login' && currentPath !== '/register') {
+      if (currentPath !== '/' && currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/pitch') {
         sessionStorage.setItem('intendedPath', currentPath);
       }
     }
@@ -273,6 +286,9 @@ class App {
                 <a href="/" class="btn btn-secondary">
                   🏠 Beranda
                 </a>
+                <a href="/pitch" class="btn btn-outline">
+                  📊 Lihat Pitch Deck
+                </a>
               </div>
             </div>
           </div>
@@ -282,9 +298,16 @@ class App {
       afterRender() {
         // Setup navigation for error page
         const homeLink = document.querySelector('a[href="/"]');
+        const pitchLink = document.querySelector('a[href="/pitch"]');
+        
         homeLink?.addEventListener('click', e => {
           e.preventDefault();
           window.dispatchEvent(new CustomEvent('navigate', { detail: '/' }));
+        });
+        
+        pitchLink?.addEventListener('click', e => {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent('navigate', { detail: '/pitch' }));
         });
       }
     };
@@ -301,7 +324,7 @@ class App {
         window.dispatchEvent(
           new CustomEvent('showInfo', {
             detail:
-              '🌱 Selamat datang! Gunakan AI untuk mendeteksi penyakit pada tanaman cabai, jagung, padi, dan tomat.',
+              '🌱 Selamat datang! Gunakan AI untuk mendeteksi penyakit pada tanaman cabai, jagung, padi, dan tomat. Tekan "I" untuk melihat pitch deck kami!',
           }),
         );
       }, 1000);
@@ -319,7 +342,7 @@ class App {
       setTimeout(() => {
         window.dispatchEvent(
           new CustomEvent('showInfo', {
-            detail: '🆕 Aplikasi telah diperbarui dengan fitur baru!',
+            detail: '🆕 Aplikasi telah diperbarui dengan fitur baru termasuk pitch deck!',
           }),
         );
       }, 2000);
@@ -342,6 +365,8 @@ class App {
       { key: 'P', description: 'Ke Profil (jika login)' },
       { key: 'R', description: 'Ke Riwayat (jika login)' },
       { key: 'D', description: 'Ke Dashboard (jika admin)' },
+      { key: 'I', description: 'Ke Pitch Deck' },
+      { key: 'Ctrl/Cmd + P', description: 'Ke Pitch Deck' },
       { key: 'Ctrl/Cmd + K', description: 'Fokus Pencarian' },
       { key: 'Ctrl/Cmd + /', description: 'Tampilkan Shortcut' },
       { key: 'Escape', description: 'Tutup Modal/Notifikasi' },
@@ -394,6 +419,7 @@ class App {
 
   async registerServiceWorker() {
     try {
+      // ServiceWorker registration code
     } catch (error) {
       console.log('ServiceWorker registration failed:', error);
     }
@@ -414,6 +440,7 @@ class App {
       }),
     );
   }
+
   destroy() {
     this.router.stop();
     this.notificationManager.clear();

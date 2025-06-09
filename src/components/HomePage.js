@@ -1,6 +1,4 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable indent */
-// src/components/HomePage.js
+// src/components/HomePage.js - Updated with Pitch Deck Navigation
 import CameraCapture from './CameraCapture.js';
 import FileUpload from './FileUpload.js';
 import authManager from '../utils/auth.js';
@@ -54,6 +52,9 @@ export default class HomePage {
                     <button class="btn btn-secondary" id="profileBtn" title="Profil">
                       👤 Profil
                     </button>
+                    <button class="btn btn-outline" id="pitchBtn" title="Investor Presentation">
+                      📈 Pitch Deck
+                    </button>
                     <button class="btn btn-outline" id="logoutBtn" title="Keluar">
                       🚪 Keluar
                     </button>
@@ -62,6 +63,9 @@ export default class HomePage {
               `
         : `
                 <div class="auth-buttons">
+                  <button class="btn btn-outline" id="pitchBtn" title="Investor Presentation">
+                    📈 Pitch Deck
+                  </button>
                   <a href="/login" class="btn btn-outline">Masuk</a>
                   <a href="/register" class="btn btn-primary">Daftar</a>
                 </div>
@@ -72,6 +76,24 @@ export default class HomePage {
         </header>
 
         <main class="main-content">
+          <!-- Investor Banner -->
+          <div class="investor-banner">
+            <div class="banner-content">
+              <div class="banner-text">
+                <h3>🚀 Interested in Investment Opportunities?</h3>
+                <p>Discover how our AI-powered agricultural solution is revolutionizing crop disease management.</p>
+              </div>
+              <div class="banner-actions">
+                <button class="btn btn-primary banner-btn" id="viewPitchBtn">
+                  📊 View Pitch Deck
+                </button>
+                <button class="btn btn-outline banner-btn" id="contactInvestorBtn">
+                  💼 Contact Us
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="welcome-section">
             <div class="welcome-content">
               <h2>🔬 Deteksi Penyakit Tanaman dengan AI</h2>
@@ -192,6 +214,27 @@ export default class HomePage {
                   <li>🔄 Model terus diperbaharui</li>
                 </ul>
               </div>
+
+              <!-- Investment CTA Card -->
+              <div class="info-card investment-card">
+                <div class="info-icon">💰</div>
+                <h4>Investment Opportunity</h4>
+                <p>Join us in revolutionizing agriculture with AI technology</p>
+                <ul class="info-list">
+                  <li>🚀 $12.9B Growing AgTech Market</li>
+                  <li>📈 95%+ AI Detection Accuracy</li>
+                  <li>🌍 Scalable Global Solution</li>
+                  <li>💎 Seeking Series A Investment</li>
+                </ul>
+                <div class="investment-actions">
+                  <button class="btn btn-primary" id="investmentPitchBtn">
+                    📊 View Full Pitch Deck
+                  </button>
+                  <button class="btn btn-outline" id="investmentContactBtn">
+                    📧 Contact for Investment
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </main>
@@ -205,6 +248,10 @@ export default class HomePage {
           <button class="mobile-nav-btn" data-tab="camera">
             <span class="nav-icon">📷</span>
             <span class="nav-text">Kamera</span>
+          </button>
+          <button class="mobile-nav-btn" id="mobilePitchBtn">
+            <span class="nav-icon">📈</span>
+            <span class="nav-text">Pitch</span>
           </button>
           ${isAuthenticated
         ? `
@@ -255,11 +302,27 @@ export default class HomePage {
     const dashboardBtn = document.getElementById('dashboardBtn');
     const profileBtn = document.getElementById('profileBtn');
 
+    // Pitch Deck buttons
+    const pitchBtn = document.getElementById('pitchBtn');
+    const mobilePitchBtn = document.getElementById('mobilePitchBtn');
+    const viewPitchBtn = document.getElementById('viewPitchBtn');
+    const investmentPitchBtn = document.getElementById('investmentPitchBtn');
+    const contactInvestorBtn = document.getElementById('contactInvestorBtn');
+    const investmentContactBtn = document.getElementById('investmentContactBtn');
+
     logoutBtn?.addEventListener('click', () => this.handleLogout());
     historyBtn?.addEventListener('click', () => this.navigateToHistory());
     mobileHistoryBtn?.addEventListener('click', () => this.navigateToHistory());
     dashboardBtn?.addEventListener('click', () => this.navigateToDashboard());
     profileBtn?.addEventListener('click', () => this.navigateToProfile());
+
+    // Pitch Deck navigation
+    pitchBtn?.addEventListener('click', () => this.navigateToPitchDeck());
+    mobilePitchBtn?.addEventListener('click', () => this.navigateToPitchDeck());
+    viewPitchBtn?.addEventListener('click', () => this.navigateToPitchDeck());
+    investmentPitchBtn?.addEventListener('click', () => this.navigateToPitchDeck());
+    contactInvestorBtn?.addEventListener('click', () => this.contactForInvestment());
+    investmentContactBtn?.addEventListener('click', () => this.contactForInvestment());
 
     // Auth buttons for non-authenticated users
     const authButtons = document.querySelectorAll('.auth-buttons a');
@@ -322,6 +385,9 @@ export default class HomePage {
               <button class="btn btn-secondary" id="profileBtn" title="Profil">
                 👤 Profil
               </button>
+              <button class="btn btn-outline" id="pitchBtn" title="Investor Presentation">
+                📈 Pitch Deck
+              </button>
               <button class="btn btn-outline" id="logoutBtn" title="Keluar">
                 🚪 Keluar
               </button>
@@ -331,6 +397,9 @@ export default class HomePage {
       } else {
         headerRight.innerHTML = `
           <div class="auth-buttons">
+            <button class="btn btn-outline" id="pitchBtn" title="Investor Presentation">
+              📈 Pitch Deck
+            </button>
             <a href="/login" class="btn btn-outline">Masuk</a>
             <a href="/register" class="btn btn-primary">Daftar</a>
           </div>
@@ -603,6 +672,44 @@ export default class HomePage {
     window.dispatchEvent(
       new CustomEvent('showInfo', {
         detail: 'Siap untuk analisis baru!',
+      }),
+    );
+  }
+
+  // New pitch deck and investment related methods
+  navigateToPitchDeck() {
+    window.dispatchEvent(new CustomEvent('navigate', { detail: '/pitch' }));
+    
+    // Track pitch deck access
+    console.log('📊 Pitch Deck accessed from homepage');
+  }
+
+  contactForInvestment() {
+    const subject = encodeURIComponent('Investment Inquiry - Plant Disease Detection');
+    const body = encodeURIComponent(`Hello,
+
+I'm interested in learning more about investment opportunities in Plant Disease Detection.
+
+Please provide more information about:
+- Current funding round details
+- Investment terms
+- Company financials
+- Market traction
+
+Looking forward to hearing from you.
+
+Best regards`);
+
+    const mailtoUrl = `mailto:glorioussatria@gmail.com?subject=${subject}&body=${body}`;
+    
+    window.open(mailtoUrl, '_blank');
+    
+    // Track investment contact
+    console.log('💼 Investment contact initiated from homepage');
+    
+    window.dispatchEvent(
+      new CustomEvent('showSuccess', {
+        detail: 'Email client opened for investment inquiry. Please send your message!',
       }),
     );
   }
