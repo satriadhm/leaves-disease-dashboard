@@ -463,7 +463,7 @@ export default class PitchDeckPage {
                     </div>
                     <div class="comparison-row">
                       <div class="feature">Cost</div>
-                      <div class="us">💰 $9.99/month</div>
+                      <div class="us">💰 Rp100.000,00/month</div>
                       <div class="competitor">💸 $200+ per visit</div>
                       <div class="competitor">💵 $15-30/month</div>
                     </div>
@@ -714,7 +714,7 @@ export default class PitchDeckPage {
                 <div class="funding-ask">
                   <div class="ask-amount">
                     <div class="amount-circle">
-                      <div class="amount">$2M</div>
+                      <div class="amount">Rp2T</div>
                       <div class="round">Series A</div>
                     </div>
                   </div>
@@ -1140,20 +1140,20 @@ Plant Disease Detection - Pitch Deck Summary
 
 💡 SOLUTION: AI-powered instant plant disease detection for smartphones
 🎯 MARKET: $12.9B AgTech market growing 22.5% annually
-💰 FUNDING: Seeking $2M Series A investment
+💰 FUNDING: Seeking $2T Series A investment
 📈 PROJECTIONS: $8.2M revenue by 2028
 
 KEY FEATURES:
 - 95%+ accuracy in disease detection
 - <2 second analysis time
 - 16+ disease types across 4 crops
-- $9.99/month subscription model
+- Rp100.000,00/month subscription model
 
 TRACTION:
 - 1,200+ beta users
 - 15,000+ scans processed
 - 4.8/5 user rating
-- $25K monthly recurring revenue
+- Rp50.000.0000,00 monthly recurring revenue
 
 For full presentation and investment details, contact glorioussatria@gmail.com
     `;
