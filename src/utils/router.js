@@ -1,265 +1,279 @@
 // src/utils/router.js
 export default class Router {
-  constructor() {
-    this.routes = {};
-    this.currentRoute = null;
-    this.currentComponent = null;
-    this.beforeRouteChange = null;
-    this.afterRouteChange = null;
-    this.notFoundHandler = null;
-    this.errorHandler = null;
-  }
+	constructor() {
+		this.routes = {};
+		this.currentRoute = null;
+		this.currentComponent = null;
+		this.beforeRouteChange = null;
+		this.afterRouteChange = null;
+		this.notFoundHandler = null;
+		this.errorHandler = null;
+	}
 
-  addRoute(path, component, options = {}) {
-    this.routes[path] = {
-      component,
-      requiresAuth: options.requiresAuth || false,
-      requiresRole: options.requiresRole || null,
-      title: options.title || 'Plant Disease Detection',
-      description: options.description || '',
-    };
-  }
+	addRoute(path, component, options = {}) {
+		this.routes[path] = {
+			component,
+			requiresAuth: options.requiresAuth || false,
+			requiresRole: options.requiresRole || null,
+			title: options.title || "Plant Disease Detection",
+			description: options.description || "",
+		};
+	}
 
-  setBeforeRouteChange(callback) {
-    this.beforeRouteChange = callback;
-  }
+	setBeforeRouteChange(callback) {
+		this.beforeRouteChange = callback;
+	}
 
-  setAfterRouteChange(callback) {
-    this.afterRouteChange = callback;
-  }
+	setAfterRouteChange(callback) {
+		this.afterRouteChange = callback;
+	}
 
-  setNotFoundHandler(handler) {
-    this.notFoundHandler = handler;
-  }
+	setNotFoundHandler(handler) {
+		this.notFoundHandler = handler;
+	}
 
-  setErrorHandler(handler) {
-    this.errorHandler = handler;
-  }
+	setErrorHandler(handler) {
+		this.errorHandler = handler;
+	}
 
-  async navigate(path, options = {}) {
-    try {
-      // Normalize path
-      path = this.normalizePath(path);
+	async navigate(path, options = {}) {
+		if (path.startsWith("#")) {
+			return; // Abaikan tautan anchor
+		}
 
-      // Check if route exists
-      const route = this.routes[path];
-      if (!route && !this.notFoundHandler) {
-        console.warn(`Route not found: ${path}`);
-        return;
-      }
+		try {
+			// Normalize path
+			path = this.normalizePath(path);
 
-      // Call before route change hook
-      if (this.beforeRouteChange) {
-        const shouldContinue = await this.beforeRouteChange(path, this.currentRoute);
-        if (shouldContinue === false) {
-          return;
-        }
-      }
+			// Check if route exists
+			const route = this.routes[path];
+			if (!route && !this.notFoundHandler) {
+				console.warn(`Route not found: ${path}`);
+				return;
+			}
 
-      // Update browser history if not a silent navigation
-      if (!options.silent) {
-        if (options.replace) {
-          window.history.replaceState({ path }, '', path);
-        } else {
-          window.history.pushState({ path }, '', path);
-        }
-      }
+			// Call before route change hook
+			if (this.beforeRouteChange) {
+				const shouldContinue = await this.beforeRouteChange(
+					path,
+					this.currentRoute
+				);
+				if (shouldContinue === false) {
+					return;
+				}
+			}
 
-      // Load the route
-      await this.loadRoute(path, route);
+			// Update browser history if not a silent navigation
+			if (!options.silent) {
+				if (options.replace) {
+					window.history.replaceState({ path }, "", path);
+				} else {
+					window.history.pushState({ path }, "", path);
+				}
+			}
 
-      // Call after route change hook
-      if (this.afterRouteChange) {
-        await this.afterRouteChange(path, this.currentRoute);
-      }
+			// Load the route
+			await this.loadRoute(path, route);
 
-      this.currentRoute = path;
-    } catch (error) {
-      console.error('Navigation error:', error);
-      if (this.errorHandler) {
-        this.errorHandler(error, path);
-      } else {
-        this.showError('Terjadi kesalahan saat memuat halaman');
-      }
-    }
-  }
+			// Call after route change hook
+			if (this.afterRouteChange) {
+				await this.afterRouteChange(path, this.currentRoute);
+			}
 
-  async loadRoute(path, route) {
-    try {
-      // Show loading state
-      this.showLoading();
+			this.currentRoute = path;
+		} catch (error) {
+			console.error("Navigation error:", error);
+			if (this.errorHandler) {
+				this.errorHandler(error, path);
+			} else {
+				this.showError("Terjadi kesalahan saat memuat halaman");
+			}
+		}
+	}
 
-      // Handle 404
-      if (!route) {
-        if (this.notFoundHandler) {
-          await this.renderComponent(this.notFoundHandler, path);
-        } else {
-          this.show404();
-        }
-        return;
-      }
+	async loadRoute(path, route) {
+		try {
+			// Show loading state
+			this.showLoading();
 
-      // Check authentication requirements
-      if (route.requiresAuth && !this.checkAuth()) {
-        await this.navigate('/login', { replace: true, silent: true });
-        return;
-      }
+			// Handle 404
+			if (!route) {
+				if (this.notFoundHandler) {
+					await this.renderComponent(this.notFoundHandler, path);
+				} else {
+					this.show404();
+				}
+				return;
+			}
 
-      // Check role requirements
-      if (route.requiresRole && !this.checkRole(route.requiresRole)) {
-        this.showUnauthorized();
-        return;
-      }
+			// Check authentication requirements
+			if (route.requiresAuth && !this.checkAuth()) {
+				await this.navigate("/login", { replace: true, silent: true });
+				return;
+			}
 
-      // Update page metadata
-      this.updatePageMeta(route.title, route.description);
+			// Check role requirements
+			if (route.requiresRole && !this.checkRole(route.requiresRole)) {
+				this.showUnauthorized();
+				return;
+			}
 
-      // Render component
-      await this.renderComponent(route.component, path);
-    } catch (error) {
-      throw error;
-    } finally {
-      this.hideLoading();
-    }
-  }
+			// Update page metadata
+			this.updatePageMeta(route.title, route.description);
 
-  async renderComponent(ComponentClass, path) {
-    try {
-      // Clean up previous component
-      if (this.currentComponent && typeof this.currentComponent.cleanup === 'function') {
-        this.currentComponent.cleanup();
-      }
+			// Render component
+			await this.renderComponent(route.component, path);
+		} catch (error) {
+			throw error;
+		} finally {
+			this.hideLoading();
+		}
+	}
 
-      // Create new component instance
-      this.currentComponent = new ComponentClass();
+	async renderComponent(ComponentClass, path) {
+		try {
+			// Clean up previous component
+			if (
+				this.currentComponent &&
+				typeof this.currentComponent.cleanup === "function"
+			) {
+				this.currentComponent.cleanup();
+			}
 
-      // Get app container
-      const app = document.getElementById('app');
-      if (!app) {
-        throw new Error('App container not found');
-      }
+			// Create new component instance
+			this.currentComponent = new ComponentClass();
 
-      // Render component
-      const html = this.currentComponent.render();
-      app.innerHTML = html;
+			// Get app container
+			const app = document.getElementById("app");
+			if (!app) {
+				throw new Error("App container not found");
+			}
 
-      // Call afterRender if available
-      if (typeof this.currentComponent.afterRender === 'function') {
-        await this.currentComponent.afterRender();
-      }
+			// Render component
+			const html = this.currentComponent.render();
+			app.innerHTML = html;
 
-      // Scroll to top
-      window.scrollTo(0, 0);
-    } catch (error) {
-      console.error('Component render error:', error);
-      throw error;
-    }
-  }
+			// Call afterRender if available
+			if (typeof this.currentComponent.afterRender === "function") {
+				await this.currentComponent.afterRender();
+			}
 
-  normalizePath(path) {
-    // Remove trailing slashes except for root
-    if (path !== '/' && path.endsWith('/')) {
-      path = path.slice(0, -1);
-    }
+			// Scroll to top
+			window.scrollTo(0, 0);
+		} catch (error) {
+			console.error("Component render error:", error);
+			throw error;
+		}
+	}
 
-    // Ensure path starts with /
-    if (!path.startsWith('/')) {
-      path = `/${path}`;
-    }
+	normalizePath(path) {
+		// Remove trailing slashes except for root
+		if (path !== "/" && path.endsWith("/")) {
+			path = path.slice(0, -1);
+		}
 
-    return path;
-  }
+		// Ensure path starts with /
+		if (!path.startsWith("/")) {
+			path = `/${path}`;
+		}
 
-  getCurrentPath() {
-    return window.location.pathname;
-  }
+		return path;
+	}
 
-  getQueryParams() {
-    const params = new URLSearchParams(window.location.search);
-    const result = {};
-    for (const [key, value] of params) {
-      result[key] = value;
-    }
-    return result;
-  }
+	getCurrentPath() {
+		return window.location.pathname;
+	}
 
-  updatePageMeta(title, description) {
-    // Update page title
-    document.title = title;
+	getQueryParams() {
+		const params = new URLSearchParams(window.location.search);
+		const result = {};
+		for (const [key, value] of params) {
+			result[key] = value;
+		}
+		return result;
+	}
 
-    // Update meta description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.name = 'description';
-      document.head.appendChild(metaDescription);
-    }
-    metaDescription.content = description;
+	updatePageMeta(title, description) {
+		// Update page title
+		document.title = title;
 
-    // Update og:title
-    let ogTitle = document.querySelector('meta[property="og:title"]');
-    if (!ogTitle) {
-      ogTitle = document.createElement('meta');
-      ogTitle.setAttribute('property', 'og:title');
-      document.head.appendChild(ogTitle);
-    }
-    ogTitle.content = title;
+		// Update meta description
+		let metaDescription = document.querySelector('meta[name="description"]');
+		if (!metaDescription) {
+			metaDescription = document.createElement("meta");
+			metaDescription.name = "description";
+			document.head.appendChild(metaDescription);
+		}
+		metaDescription.content = description;
 
-    // Update og:description
-    let ogDescription = document.querySelector('meta[property="og:description"]');
-    if (!ogDescription) {
-      ogDescription = document.createElement('meta');
-      ogDescription.setAttribute('property', 'og:description');
-      document.head.appendChild(ogDescription);
-    }
-    ogDescription.content = description;
-  }
+		// Update og:title
+		let ogTitle = document.querySelector('meta[property="og:title"]');
+		if (!ogTitle) {
+			ogTitle = document.createElement("meta");
+			ogTitle.setAttribute("property", "og:title");
+			document.head.appendChild(ogTitle);
+		}
+		ogTitle.content = title;
 
-  checkAuth() {
-    const token = localStorage.getItem('authToken');
-    return !!token;
-  }
+		// Update og:description
+		let ogDescription = document.querySelector(
+			'meta[property="og:description"]'
+		);
+		if (!ogDescription) {
+			ogDescription = document.createElement("meta");
+			ogDescription.setAttribute("property", "og:description");
+			document.head.appendChild(ogDescription);
+		}
+		ogDescription.content = description;
+	}
 
-  checkRole(requiredRole) {
-    if (!this.checkAuth()) {
-      return false;
-    }
+	checkAuth() {
+		const token = localStorage.getItem("authToken");
+		return !!token;
+	}
 
-    try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const userRoles = user.roles || [];
+	checkRole(requiredRole) {
+		if (!this.checkAuth()) {
+			return false;
+		}
 
-      // Check if user has the required role
-      return userRoles.some(role => role.includes(requiredRole.toUpperCase()));
-    } catch {
-      return false;
-    }
-  }
+		try {
+			const user = JSON.parse(localStorage.getItem("user") || "{}");
+			const userRoles = user.roles || [];
 
-  showLoading() {
-    window.dispatchEvent(
-      new CustomEvent('showLoading', {
-        detail: { message: 'Memuat halaman...' },
-      })
-    );
-  }
+			// Check if user has the required role
+			return userRoles.some((role) =>
+				role.includes(requiredRole.toUpperCase())
+			);
+		} catch {
+			return false;
+		}
+	}
 
-  hideLoading() {
-    window.dispatchEvent(new CustomEvent('hideLoading'));
-  }
+	showLoading() {
+		window.dispatchEvent(
+			new CustomEvent("showLoading", {
+				detail: { message: "Memuat halaman..." },
+			})
+		);
+	}
 
-  showError(message) {
-    window.dispatchEvent(
-      new CustomEvent('showError', {
-        detail: message,
-      })
-    );
-  }
+	hideLoading() {
+		window.dispatchEvent(new CustomEvent("hideLoading"));
+	}
 
-  show404() {
-    const app = document.getElementById('app');
-    if (app) {
-      app.innerHTML = `
+	showError(message) {
+		window.dispatchEvent(
+			new CustomEvent("showError", {
+				detail: message,
+			})
+		);
+	}
+
+	show404() {
+		const app = document.getElementById("app");
+		if (app) {
+			app.innerHTML = `
         <div class="error-page">
           <div class="error-content">
             <div class="error-icon">🔍</div>
@@ -276,13 +290,13 @@ export default class Router {
           </div>
         </div>
       `;
-    }
-  }
+		}
+	}
 
-  showUnauthorized() {
-    const app = document.getElementById('app');
-    if (app) {
-      app.innerHTML = `
+	showUnauthorized() {
+		const app = document.getElementById("app");
+		if (app) {
+			app.innerHTML = `
         <div class="error-page">
           <div class="error-content">
             <div class="error-icon">🚫</div>
@@ -299,104 +313,107 @@ export default class Router {
           </div>
         </div>
       `;
-    }
-  }
+		}
+	}
 
-  start() {
-    // Listen for browser navigation
-    window.addEventListener('popstate', e => {
-      const path = e.state?.path || window.location.pathname;
-      this.loadRoute(path, this.routes[path]);
-    });
+	start() {
+		// Listen for browser navigation
+		window.addEventListener("popstate", (e) => {
+			const path = e.state?.path || window.location.pathname;
+			this.loadRoute(path, this.routes[path]);
+		});
 
-    // Listen for custom navigation events
-    window.addEventListener('navigate', e => {
-      this.navigate(e.detail);
-    });
+		// Listen for custom navigation events
+		window.addEventListener("navigate", (e) => {
+			this.navigate(e.detail);
+		});
 
-    // Load initial route
-    const initialPath = this.getCurrentPath();
-    this.navigate(initialPath, { silent: true });
-  }
+		// Load initial route
+		const initialPath = this.getCurrentPath();
+		this.navigate(initialPath, { silent: true });
+	}
 
-  stop() {
-    // Clean up event listeners and current component
-    if (this.currentComponent && typeof this.currentComponent.cleanup === 'function') {
-      this.currentComponent.cleanup();
-    }
-  }
+	stop() {
+		// Clean up event listeners and current component
+		if (
+			this.currentComponent &&
+			typeof this.currentComponent.cleanup === "function"
+		) {
+			this.currentComponent.cleanup();
+		}
+	}
 
-  // Utility methods for programmatic navigation
-  goBack() {
-    window.history.back();
-  }
+	// Utility methods for programmatic navigation
+	goBack() {
+		window.history.back();
+	}
 
-  goForward() {
-    window.history.forward();
-  }
+	goForward() {
+		window.history.forward();
+	}
 
-  replace(path) {
-    this.navigate(path, { replace: true });
-  }
+	replace(path) {
+		this.navigate(path, { replace: true });
+	}
 
-  reload() {
-    this.navigate(this.getCurrentPath(), { silent: true });
-  }
+	reload() {
+		this.navigate(this.getCurrentPath(), { silent: true });
+	}
 
-  // Route guards
-  addGuard(guardFn) {
-    const originalBeforeRouteChange = this.beforeRouteChange;
-    this.beforeRouteChange = async (to, from) => {
-      // Call original guard first
-      if (originalBeforeRouteChange) {
-        const result = await originalBeforeRouteChange(to, from);
-        if (result === false) {
-          return false;
-        }
-      }
+	// Route guards
+	addGuard(guardFn) {
+		const originalBeforeRouteChange = this.beforeRouteChange;
+		this.beforeRouteChange = async (to, from) => {
+			// Call original guard first
+			if (originalBeforeRouteChange) {
+				const result = await originalBeforeRouteChange(to, from);
+				if (result === false) {
+					return false;
+				}
+			}
 
-      // Call new guard
-      return await guardFn(to, from);
-    };
-  }
+			// Call new guard
+			return await guardFn(to, from);
+		};
+	}
 
-  // Route parameters (basic implementation)
-  extractParams(routePath, actualPath) {
-    const routeParts = routePath.split('/');
-    const actualParts = actualPath.split('/');
-    const params = {};
+	// Route parameters (basic implementation)
+	extractParams(routePath, actualPath) {
+		const routeParts = routePath.split("/");
+		const actualParts = actualPath.split("/");
+		const params = {};
 
-    for (let i = 0; i < routeParts.length; i++) {
-      const routePart = routeParts[i];
-      const actualPart = actualParts[i];
+		for (let i = 0; i < routeParts.length; i++) {
+			const routePart = routeParts[i];
+			const actualPart = actualParts[i];
 
-      if (routePart.startsWith(':')) {
-        const paramName = routePart.slice(1);
-        params[paramName] = actualPart;
-      }
-    }
+			if (routePart.startsWith(":")) {
+				const paramName = routePart.slice(1);
+				params[paramName] = actualPart;
+			}
+		}
 
-    return params;
-  }
+		return params;
+	}
 
-  // Check if a path matches a route pattern
-  matchRoute(routePattern, actualPath) {
-    const routeParts = routePattern.split('/');
-    const actualParts = actualPath.split('/');
+	// Check if a path matches a route pattern
+	matchRoute(routePattern, actualPath) {
+		const routeParts = routePattern.split("/");
+		const actualParts = actualPath.split("/");
 
-    if (routeParts.length !== actualParts.length) {
-      return false;
-    }
+		if (routeParts.length !== actualParts.length) {
+			return false;
+		}
 
-    for (let i = 0; i < routeParts.length; i++) {
-      const routePart = routeParts[i];
-      const actualPart = actualParts[i];
+		for (let i = 0; i < routeParts.length; i++) {
+			const routePart = routeParts[i];
+			const actualPart = actualParts[i];
 
-      if (!routePart.startsWith(':') && routePart !== actualPart) {
-        return false;
-      }
-    }
+			if (!routePart.startsWith(":") && routePart !== actualPart) {
+				return false;
+			}
+		}
 
-    return true;
-  }
+		return true;
+	}
 }

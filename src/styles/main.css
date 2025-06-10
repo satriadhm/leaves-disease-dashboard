@@ -1,25 +1,26 @@
 /* src/styles/main.css - Updated Main CSS Entry Point */
 
 /* Base Styles */
-@import './base/variables.css';
-@import './base/reset.css';
-@import './base/utilities.css';
+@import "./base/variables.css";
+@import "./base/reset.css";
+@import "./base/utilities.css";
 
 /* Components */
-@import './components/buttons.css';
-@import './components/forms.css';
-@import './components/notifications.css';
-@import './components/upload-camera.css';
-@import './components/states.css';
-@import './components/tabs.css';
+@import "./components/buttons.css";
+@import "./components/forms.css";
+@import "./components/notifications.css";
+@import "./components/upload-camera.css";
+@import "./components/states.css";
+@import "./components/tabs.css";
 
 /* Layouts */
-@import './layouts/layout.css';
-@import './layouts/auth.css';
+@import "./layouts/layout.css";
+@import "./layouts/auth.css";
 
 /* Pages */
-@import './pages/home.css';
-@import './pages/history.css';
-@import './pages/profile.css';
-@import './pages/dashboard.css';
-@import './pages/pitch-deck.css';
+@import "./pages/home.css";
+@import "./pages/history.css";
+@import "./pages/profile.css";
+@import "./pages/dashboard.css";
+@import "./pages/pitch-deck.css";
+@import "./pages/landing.css";
