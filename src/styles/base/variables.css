@@ -29,18 +29,37 @@
   --success-200: #a7f3d0;
   --success-500: #10b981;
   --success-600: #059669;
+  --success-700: #047857; /* Added for darker success contrast */
+  --success-800: #065f46; /* Added for even darker success contrast */
 
   --warning-50: #fffbeb;
   --warning-100: #fef3c7;
   --warning-200: #fde68a;
   --warning-500: #f59e0b;
   --warning-600: #d97706;
+  --warning-700: #b45309; /* Added for darker warning contrast */
 
   --error-50: #fef2f2;
   --error-100: #fee2e2;
   --error-200: #fecaca;
   --error-500: #ef4444;
   --error-600: #dc2626;
+  --error-700: #b91c1c; /* Added for darker error contrast */
+  --error-800: #991b1b; /* Added for even darker error contrast */
+
+  /* Custom Background Colors */
+  --gray-25: #fcfcfd; /* A very subtle off-white for card backgrounds */
+
+  /* Text Colors for contrast on light backgrounds (Primary for main, Secondary for body/sub, Tertiary for less emphasis) */
+  --text-primary: var(--gray-800);
+  --text-secondary: var(--gray-600);
+  --text-tertiary: var(--gray-500);
+
+  /* Gradients for text and elements for visual appeal */
+  --gradient-primary: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+  --gradient-success: linear-gradient(135deg, var(--success-500), var(--success-600));
+  --gradient-warning: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+  --gradient-error: linear-gradient(135deg, var(--error-500), var(--error-600));
 
   /* Spacing */
   --space-1: 0.25rem;
@@ -61,23 +80,51 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem; /* Added for larger, softer corners */
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25); /* Larger shadow for modals/prominent elements */
+  --shadow-card: var(--shadow-lg); /* General card shadow */
+  --shadow-card-hover: 0 15px 30px -5px rgba(0, 0, 0, 0.15), 0 6px 10px -4px rgba(0, 0, 0, 0.08); /* More pronounced hover shadow */
+
 
   /* Transitions */
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 250ms ease-in-out;
   --transition-slow: 350ms ease-in-out;
+  --transition-slower: 500ms ease-in-out; /* Added for smoother animations */
 
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --line-height-tight: 1.25;
+  --line-height-tight: 1.1; /* Slightly tighter for headings */
   --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
+  --line-height-relaxed: 1.65; /* Slightly more relaxed for body text */
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800; /* For very bold text */
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
 
   /* Z-index */
   --z-dropdown: 1000;
