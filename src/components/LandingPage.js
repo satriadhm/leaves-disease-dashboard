@@ -99,7 +99,7 @@ export default class LandingPage {
                 ${
 									isAuthenticated
 										? `<a href="/home" class="btn btn-primary btn-large">Mulai Deteksi</a>`
-										: `<a href="/register" class="btn btn-primary btn-large">Coba Gratis Sekarang</a>`
+										: `<a href="/dashboard" class="btn btn-primary btn-large">Coba Gratis Sekarang</a>`
 								}
               </div>
             </div>
