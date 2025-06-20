@@ -1,4 +1,6 @@
+// src/components/LandingPage.js - Professional Landing Page
 import authManager from "../utils/auth.js";
+
 export default class LandingPage {
 	constructor() {
 		this.currentTestimonial = 0;

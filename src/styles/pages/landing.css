@@ -1,9 +1,11 @@
+/* src/styles/pages/landing.css - Landing Page Styles */
 
 .landing-page {
 	min-height: 100vh;
 	background: var(--bg-primary);
 }
 
+/* Navigation */
 .landing-nav {
 	position: fixed;
 	top: 0;
