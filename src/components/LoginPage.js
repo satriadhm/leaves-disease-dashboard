@@ -77,20 +77,6 @@ export default class LoginPage {
             <span>atau</span>
           </div>
           
-          <div class="demo-credentials">
-            <h4>Demo Credentials:</h4>
-            <div class="demo-accounts">
-              <div class="demo-account">
-                <strong>Admin:</strong> admin / adminpassword
-                <button class="btn-demo" data-username="admin" data-password="adminpassword">Coba</button>
-              </div>
-              <div class="demo-account">
-                <strong>User:</strong> testuser / userpassword  
-                <button class="btn-demo" data-username="testuser" data-password="userpassword">Coba</button>
-              </div>
-            </div>
-          </div>
-          
           <div class="auth-footer">
             <p>Belum punya akun? <a href="/register" class="link">Daftar di sini</a></p>
           </div>
